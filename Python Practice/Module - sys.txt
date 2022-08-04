@@ -1,0 +1,32 @@
+#sys module
+
+'''
+import sys
+print(f'the program is called {sys.argv[0]}')
+print(f'there sre {len(sys.argv) - 1} cmd arg')
+for i, j in enumerate(sys.argv[1:]):
+    print(f'Argument {i} is {j}')
+'''
+PS C:\Users\Sagar Wagh\Desktop\Practice> py .\main.py 1 2 34
+the program is called .\main.py
+there sre 3 cmd arg
+Argument 0 is 1
+Argument 1 is 2
+Argument 2 is 34
+
+#sys.argv
+    -to accept argument from command line
+    -start from the 0 onward
+    -it add file name at location 0
+
+'''
+import sys
+
+while True:
+    print("type exit")
+    res = input()
+    if res == "exit":
+        sys.exit()
+    print("you type", res)
+
+'''

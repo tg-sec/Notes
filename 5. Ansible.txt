@@ -1,0 +1,165 @@
+control node -	 a machine installed with ansible is control node.and can run ansible and ansible-playbook
+Managed nodes -	 ansible is not installed on managed nodes.it can be any system.Managed nodes are also sometimes called “hosts”.
+Inventory -		 list of managed node also called hostfile. it contain IP addess or hostnames
+role -			 collection of task in single file
+Tasks -			 unit of action in ansible. can execute a single command with ad-hoc command
+Collections -	 Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins
+Modules -		 The units of code Ansible executes. a library or plugin to execute specific task.
+Playbooks -		 its a ordered list of the task and modules or a scripted way of task to execute on host/ managed nodes.written in YAML language
+
+------------------------------------------------------------------------
+basic Inventory contain in /etc/ansible/hosts with ip address of FQDN
+ansible is idempotent language
+
+-----------------------------------------------------------------------
+ansible -i invent.ini host1 -m ping - ping a all hosts oneliner (-m = module )
+ansible -i invent.ini host1 -a "/bin/echo hello" - its a live command with flag (-a = argument)
+ansible all -m ping -u bruce --become - to become a sudo use become for normal user
+ansible -i invent.ini  host1 -a "ls" -vvvv - output in verbose mode (-vvvv)
+ansible -i invent.ini  host1 -m copy -a "src=invent.ini dest=/root/invent.ini" - source to destination copy file
+ansible -i invent.ini  host1 -m file -a "dest=/root/invent.ini mode=111 state=file" - file module to manipulate the file
+ansible -i invent.ini  host1 -m apt -a "name=acme state=present" - package management with apt
+ansible -i invent.ini  host1 -m user -a "name=test password=test state=absent" - user and group management
+ansible -i invent.ini  host1 -m service -a "name=apache2 state=stopped" - service management
+ansible -i invent.ini  host1 -m setup - gathering system facts (facts nothing but get ad hoc information about your systems)
+
+------------------------------------------------------------------------------
+Playbook
+Playbooks record and execute Ansible’s configuration, deployment, and orchestration functions.
+ansible use jinja2 templating enable dynamic expressions and access to variables and facts.
+ansible-config - use for ansible configuration
+ansible-vault -create a secret storage vault for playbooks
+ansible-galaxy - a collection of ansible role on cloud can be developed by any one. you can install the role from galaxy
+
+------------------------
+Sample ansible playbook
+---------------------------
+---
+- name: "All Host"
+  hosts: all
+  tasks:
+    - name: "Ping the System"
+      ping:
+
+-------------------------------
+---
+- name: "All Host"
+  hosts: all
+  tasks:
+  -
+    file:
+      path: /tmp/a_test
+      owner: root
+      group: root
+      mode: 777
+      state: directory
+  -
+    ping:
+
+--------------------------------
+Multi host Inventory
+[host]
+server bame or id here
+[multi:children]
+add server host here
+[multi:vars]
+a universal variable add here
+ansible_ssh_user=vagrent
+ansible_private_ssh_key=~/.
+
+-------------------------------------
+jinja templating
+- name: Copy configuration files.
+copy:
+  src: "{{ item.src }}"
+  dest: "{{ item.dest }}"
+  owner: root
+  group: root
+  mode: 0644
+    with_items:
+    - src: httpd.conf
+      dest: /etc/httpd/conf/httpd.conf
+    - src: httpd-vhosts.conf
+      dest: /etc/httpd/conf/httpd-vhosts.conf
+
+--------------------------------------------------
+modules
+	creates - idempotent creation module
+	setup - gather facts
+	fail - set step in playbook to false for testing
+	assert - reverse of reverse condition in playbook
+	debug - to debug playbook
+	register - a variable registration on any task
+	validate -  use to validate the syntax in config file in service
+
+-----------------------------------
+Ansible Playbook Component -
+pre-tasks -	 a conditional execution block that runs before running the play
+post-tasks - executed after the actual play or task is completed
+vars -		 variable used in playbook
+var_files -	 multi os yaml configuration
+handlers -	 its nothing but the task. any changes are there in configuration of file NOTIFY will call the handler to execute the task which is already executed
+environment variable - system environment variable for the remote systems
+roles -		 roles is grouping of task to reuse with other playbooks (meta - give a list of dependency ,tasks - common tasks include in it)
+
+--------------------------------------------
+Ansible testing
+molecule - Molecule project is designed to aid in the development and testing of Ansible roles.
+yamllint - check the syntax and spacing
+ansible-playbook --syntax-check - check the mapping of code in playbook
+ansible-lint - same as yamllint
+molecule test (integration) - checks the all playbooks are working properly in roles and collections
+ansible-playbook --check - its a dry run of the playbook to check all tasks are working properly or not
+parallel infrastructure - actual execution of the playbooks
+
+-----------------------------------------------
+ansible security
+Follow the security as per company policy and automate the
+
+-----------------------------------------------
+Ansible Tower/AWX
+ansible web interface with API Access
+
+---------------------------------------------------------------------------------------
+Ansible in Dev/Production Deployment
+
+Sample Project
+
+	├── group_vars
+	│   └── all.yml
+	├── hosts
+	├── roles
+	│   ├── flask
+	│   │   ├── files
+	│   │   │   ├── querier.conf
+	│   │   │   └── querier.wsgi
+	│   │   ├── handlers
+	│   │   │   └── main.yml
+	│   │   ├── tasks
+	│   │   │   └── main.yml
+	│   │   └── templates
+	│   │       └── querier.py.j2
+	│   ├── haproxy
+	│   │   ├── handlers
+	│   │   │   └── main.yml
+	│   │   ├── tasks
+	│   │   │   └── main.yml
+	│   │   ├── templates
+	│   │   │   └── haproxy.cfg.j2
+	│   │   └── vars
+	│   │       └── main.yml
+	│   └── mariadb
+	│       ├── handlers
+	│       │   └── main.yml
+	│       └── tasks
+	│           └── main.yml
+	└── site.yml
+
+Create small roles for per stage and that stage will be execute particulate set of tasks. one main.yml playbook will integrate the all roles in one place.
+
+	group_vars - contain all variable and value of Production environment
+	hosts - it will contain all host details like ip address and host names
+	roles - it will contain all sub set of roles and those role will execute set of tasks
+	site.yml - it master playbook it will integrate all roles in one place.
+
+https://devopscon.io/blog/ansible-tutorial-multi-tier-deployment-with-ansible/

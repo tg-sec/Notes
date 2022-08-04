@@ -1,0 +1,121 @@
+Docker Client - user interaction to docker
+Docker Server - handle and managing the container and images as well as communication
+  daemon - container and images
+    listens for Docker API requests and manages Docker objects such as images, containers, networks, and volumes. A daemon can also communicate with other daemons to manage Docker services.
+Docker Registry - A Docker registry stores Docker images.
+
+--------------------------------------------------------------------------
+docker pull - download image from registry
+docker ps - show all container running on Docker
+docker inspect <container_name> -   shows the container all properties
+docker images -  show all available images on local
+docker export <container_name> > <name .tar> -  Export a container’s filesystem as a tar archive
+docker import  - <myname> < <name.tar> -    Import the contents from a tarball to create a filesystem image
+docker save -o <name.tar> <Imange_name> -   Save one or more images to a tar archive
+docker load < <name.tar> -  Load an image from a tar archive
+docker rmi - remove images from registry with specific tag
+docker run -dit <Imange_name> -  run image in container in detached mode
+docker rm <container_name> - remove container
+docker image rm <Image_name> - remove images
+docker exec -it <container-id> bash -  accessing shell after container deployed
+docker attach <container_name> - attach terminal to container shell direct
+    -d = detached
+    -i = interactive
+    -t = tty(teletypewriter)
+docker tag - taging a images to maintain version of images
+docker push <Imange_name> - push image to remote registry(Local or global (docker Hub))
+
+-----------------------------------------------------------------
+Docker image from scratch
+
+Sample code:
+    FROM scratch
+    ADD hello /
+    CMD ["/hello"]
+
+Docker build -t <Image_name> . - building image from Dockerfile
+docker run --rm <Image_name> - rum image and destroy container after use
+docker stop <container_name> - stop the container
+docker kill <container_name> - kill the container
+docker restart <container_name> - restart the container (stopped,pause or killed can start again)
+docker history <Image_name> - can see the work history on images
+docker logs <container_name> - can see the live logs
+docker volume create <volume_name> - create volume for images
+docker network - crate and manage network of docker (Bridge,overlay)
+
+---------------------------------------------------------------------
+Dockerfile - A Dockerfile is a text file which contains a series of commands or instructions.These instructions are executed in the order in which they are written.Execution of these instructions takes place on a base image.On building the Dockerfile, the successive actions form a new image from the base parent image.
+
+Instruction:
+    COPY - takes in a src and destination. It only lets you copy in a local file or directory from your host (the machine building the Docker image) into the Docker image itself.
+
+    ADD - lets you do that too, but it also supports 2 other sources. First, you can use a URL instead of a local file / directory. Secondly, you can extract a tar file from the source directly into the destination.
+
+    CMD - There can only be one CMD instruction in a Dockefile.
+
+    RUN - execute command on top of the below layer and create a new layer. 4 time RUN in Dockerfile it create 4 Layers
+
+    ENTRYPOINT - instruction make your container run as an executable.(ENTRYPOINT [“executable”, “param1”, “param2”] ).If an image has an ENTRYPOINT if you pass an argument it, while running container it wont override the existing entrypoint, it will append what you passed with the entrypoint.To override the existing ENTRYPOINT you should user -–entrypoint flag when running container.
+
+    SHELL  - to allows the default shell used for the shell form of commands to be overridden.must be written in JSON format.
+
+    ONBUILD - instruction adds to the image a trigger instruction to be executed at a later time, when the image is used as the base for another build. The trigger will be executed in the context of the downstream build, as if it had been inserted immediately after the FROM instruction in the downstream Dockerfile
+            (https://dockerlabs.collabnix.com/beginners/dockerfile/onbuild.html)
+
+    WORKDIR - defines the working directory for the rest of the instructions in the Dockerfile. The WORKDIR instruction wont create a new layer in the image but will add metadata to the image config. Default it set current working Dir.
+
+    USER - similer to WROKDIR but for the User.which user should be use to execute instruction.
+
+    ENV or ARG - both are same. set the environment variables.ARG is deprecated.
+
+    VOLUME - use to create volume in docker whiling building Images
+
+    EXPOSE - expose a port.use TCP default.
+
+    LABEL - Organizing the Dockefile and image
+
+--------------------------------------------------------------------------------------------------------------------
+Docker Compose - Docker Compose is a tool for defining and running multi-container Docker applications. With Compose, you use a YAML file to configure your application’s services. Then, with a single command, you create and start all the services from your configuration. By default, docker-compose expects the name of the Compose file as docker-compose.yml or docker-compose.yaml. If the compose file have different name we can specify it with -f flag.
+
+docker-compose version -  show the version
+docker-compose config - validate the docker-compose file and view the compose file
+docker-compose build - use to build images from the config file with dockerfile
+docker-compose pull - pull down the images
+docker-compose push - push the images to hub
+docker-compose up - help you to bring up a multi-container application, which you have described in your docker-compose file.
+docker-compose down - helps to Stop and remove containers, networks, images, and volumes.
+docker-compose images - list out all images
+docker-compose ps - show the running container by docker-compose
+docker-compose stop - help us to stop containers in service.
+docker-compose start - help us to start containers of a service.
+docker-compose restart - help us to restart the services.
+docker-compose pause - help to pause service
+docker-compose unpause - help to Unpauses paused containers of a service
+docker-compose logs - help to see the service logs.
+docker-compose port - print the public/network facing port for a service
+docker-compose run - start a new container to execute the command, not executed against a running container
+docker-compose scale <service name> = <no of instances>  - sets the number of containers to run for a service.
+docker-compose exec - execute the cmd after service running
+docker-compose kill - Verify if the kill command kills all the container started by the docker-compose and verify if there is any running container after killing it.
+docker-compose rm - helps to Remove stopped containers
+
+-----------------------------------------------------------------------------------------
+How to make lightweight images?
+	1. dont add many RUN instruction it will reduce the Layers
+	2. use multistage builds to reduce the size of images.
+		  one stage will contain compiler with different image and another stage will copy compiled binary into another image it will create SINGLE COMPILED BINARY ONLY IMAGE.
+		  (https://learnk8s.io/blog/smaller-docker-images)
+
+-----------------------------------------------------------------------------------------------------------------------
+Sample Docker compose -
+
+version: '3.1'
+services:
+  #Nginx Service
+   webserver:
+     image: nginx:alpine
+     container_name: webserver
+     restart: unless-stopped
+     ports:
+       - "80:80"
+       - "443:443"

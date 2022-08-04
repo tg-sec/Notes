@@ -1,0 +1,190 @@
+1. Broken Authentication
+    Authentication Weakness for user's identity, authentication, and session management
+        - permits brute force Attack, Default Passwords, Automated Attacks
+        - User sessions or authentication tokens aren't properly invalidated during logout or a period of inactivity
+
+    Prevention -
+        - Implement Two-Factor Authentication to prevent automated Attacks
+        - implement password policy mechanism
+        - Use a server-side, secure, built-in session manager that generates a new random session ID
+
+    Eg Code.
+
+2. Broken Access Control
+    Access control enforces policy on users cannot act outside of their intended permissions.Failures typically lead to unauthorized information disclosure, modification, or destruction of the data.
+        - Accessing API with missing access controls for POST, PUT and DELETE.
+        - Elevation of privilege
+        - Bypassing access control checks by modifying the URLs, Application state, modifying API Request
+        - tampering with a JWT,access control token, or a cookie or hidden field manipulated to elevate privileges
+
+    Prevention -
+        - Except for public resources, deny by default
+        - Log access control failures, alert admins when appropriate
+        - Minimize CORS Usages
+        - Disable web directory listing and make sure metadata files (.git) and backup files are not present in web roots.
+        - Rate limit API and controller access
+
+    Eg Code.
+             pstmt.setString(1, request.getParameter("acct"));
+             ResultSet results = pstmt.executeQuery( );
+
+        URL -
+             https://example.com/app/accountInfo?acct=notmyacct
+
+3. Injection
+    User-supplied data is not validated, filtered, or sanitized by the application to interpreter.Used of object-relational mapping (ORM) search parameters to extract additional, sensitive records.(first_name, last_name in sql).
+    Some of the more common injections are SQL, NoSQL, OS command, Object Relational Mapping (ORM), LDAP.
+        - Hostile Data with object-relational mapping (ORM) search parameters to extract additional, sensitive records.
+        - Hostile data is directly used or concatenated.
+
+    Prevention -
+        - Source code review is the best method of detecting if applications are vulnerable to injections
+        - use a safe API
+        - provides a parameterized interface
+        - Use positive server-side input validation
+        - For any residual dynamic queries, escape special characters using the specific escape syntax for that interpreter.
+
+    Eg Code.
+            String query = "SELECT \* FROM accounts WHERE custID='" + request.getParameter("id") + "'";
+
+             http://example.com/app/accountView?id=' or '1'='1
+
+4. Security Misconfiguration
+    Missing appropriate security hardening across any part of the application stack or improperly configured permissions on cloud services.
+        - Unnecessary features are enabled or installed (e.g., unnecessary ports, services, pages, accounts, or privileges).
+        - Default accounts and their passwords are still enabled and unchanged.
+        - security settings in the application servers, application frameworks libraries, databases, are not set to secure values.
+        - upgraded systems, the latest security features are disabled or not configured securely.
+
+    Prevention -
+        - Once you understand your entire environment, the best way to manage risk is to lock down the most critical infrastructure, allowing only desired behavior.
+        - Any communication which is not necessary for an application should be blocked
+        - Sending security directives to clients, e.g., Security Headers.
+
+    Eg Code.
+        - application servers with sample/demo applications not removed.(DB default credentials)
+        - Directory listing is not disabled on the server.
+
+5. Vulnerable and Outdated Component
+    If the software is vulnerable, unsupported, or out of date. This includes the OS, web/application server, database management system (DBMS), applications, APIs and all components, runtime environments, and libraries.
+        - not scanning for vulnerability regularly.
+        - not fix or upgrade the underlying platform, frameworks, and dependencies in a risk-based, timely fashion.
+        - software developers do not test the compatibility of updated, upgraded, or patched libraries.
+
+    Prevention -
+        - Remove unused dependencies, unnecessary features, components, files, and documentation.
+        - keep server-side and client-side component inventory updated.
+        - continuously monitor CVE,CWE,NVD notification for vulnerability update.
+        - use SCA tool in development environment.
+
+    Eg Code.
+        - Log4shell vulnerability
+
+6. Server-Side Request Forgery (SSRF)
+    vulnerability that allows an attacker to induce the server-side application to make requests to an unintended location.
+    SSRF flaws occur whenever a web application is fetching a remote resource without validating the user-supplied URL.
+        - allows an attacker to coerce the application to send a crafted request to an unexpected destination, even when protected by a firewall, VPN, NACL.
+
+    Prevention -
+        Disable unused URL schemas -  file:///, dict://, ftp://, and gopher://.
+        - From Network layer -
+            - Enforce “deny by default” firewall policies or network access control rules to block all but essential intranet traffic.
+            - segment remote resource access functionality in separate networks.
+        - From Application layer -
+            - Sanitize and validate all User-supplied data.
+            - Disable HTTP redirection
+        Use VPN to access applications
+
+    Eg Code.
+        <?php
+            $url = $_GET['url'];
+            $image = fopen($url, 'rb');
+            header("Content-Type: image/png");
+            fpassthru($image);}
+            ?>
+
+        GET /?url=http://localhost/server-status HTTP/1.1
+        Host: example.com
+
+        - cloud metadata storage access
+        GET /?url=http://169.254.169.254/latest/meta-data/ HTTP/1.1
+        Host: example.com
+
+        - URL schema redirection
+        GET /?url=file:///etc/passwd HTTP/1.1
+        Host: example.com
+
+        - Access metadata storage of cloud services – Most cloud providers have metadata storage such as http://169.254.169.254/
+
+7. Security Logging and Monitoring Failure
+    Without logging and monitoring, breaches cannot be detected.
+        - Auditable events, such as logins, failed logins, and high-value transactions, are not logged
+        - Logs should not stored locally.
+
+    Prevention -
+        - Ensure all login, access control, and server-side input validation failures can be logged with sufficient user context
+        - Ensure that logs are generated in a format that log management solutions can easily consume.
+        - teams should establish effective monitoring and alerting of suspicious activities are detected and responded to quickly.
+
+8. Insecure Design
+    “missing or ineffective control design.
+        - insecure design - design flaws
+        - insecure implementation - implementation defects for a reason
+
+    Prevention -
+        - Threat Modeling is the best option
+        - Add SSDLC in environment
+
+9. Cryptographic Failure
+    determine the protection needs of data in transit and at rest.
+        - data transmitted in clear text
+        - old or weak cryptographic algorithms or protocols used
+        - invalidated server certificate and trust chain.
+        - deprecated hash functions such as MD5 or SHA1 in use.
+
+    Prevention -
+        - Classify data processed, stored, or transmitted by an application.
+        - Make sure to encrypt all sensitive data at rest.
+        - Encrypt all data in transit with secure protocols(SSL/TLS)
+        - Enforce HSTS type policy use
+        - Ensure that cryptographic randomness is used.
+
+    Eg. Code
+        - sites dont use TLS
+        - Databases uses non-salted simple hash to store password
+
+10. Cross Site Scripting (XSS)
+    The malicious content sent to the web browser in form of JS,HTML,flash code that browser execute.
+
+        Type of XSS -
+            Reflected - injected script is reflected off the web server, such as in an error message, search result, or any other response that includes some or all of the input sent to the server as part of the request.A single request payload delivery
+                Original -
+                    <input type="text" name="state" value="INPUT_FROM_USER">
+                Injected -
+                    " onfocus="alert(document.cookie)
+
+            Stored - web application gathers malicious input from a user and then stores that input in a data store for later use.
+                Original -
+                    <input class="inputbox" type="text" name="email" size="40" value="aaa@aa.com" />
+                Injected -
+                    <input class="inputbox" type="text" name="email" size="40" value="aaa@aa.com"> MALICIOUS CODE <!-- />
+
+            DOM - Controls the flow of the code by using elements of the Document Object Model (DOM) along with code crafted by the attacker to change the flow.
+                Original -
+                    <script>
+                        document.write("Site is at: " + document.location.href + ".");
+                    </script>
+                Injected -
+                    #<script>alert('xss')</script>
+
+            Blind - Hard to confirm
+
+    Prevention -
+        - CSP policy
+        - user-input data sanitized
+        - appropriate response headers (Content-Type and X-Content-Type-Options)
+
+--------------------------------------------------------------------------------------------------------------------------
+CORS - Cross Origin Resource Sharing
+ORM - Object Relational Mapping
+DOM - Document Object Model

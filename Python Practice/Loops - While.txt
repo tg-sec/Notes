@@ -1,0 +1,62 @@
+#While Loop
+
+    SPAM = 0
+    while SPAM < 10:
+        print("Hello There")
+        SPAM += 1
+
+#
+    name = ""
+    while name != "name":
+        print("please name")
+        name = input()
+        print("again")
+    print("thanx")
+
+#
+
+    i = 0
+    while i < 5:
+        print("this is a game " + str(i))
+        i = i + 1
+
+#Break statement
+
+    NAME = ""
+    while NAME != "test":
+        print("please NAME")
+        NAME = input()
+        break
+    print("thanx")
+
+#
+    while True:
+        print("Enter the Name")
+        name = input()
+        if name == "test":
+            print("Its True")
+            break
+
+#continue statement
+
+    while True:
+        print("Enter the Name")
+        name = input()
+        if name == "test":
+            print("Its True")
+            continue
+
+#break and continue statement
+
+    while True:
+        print("NAME Please:")
+        NAME = input()
+        if NAME != "test":
+            # print("its true")
+            continue
+        print("password please")
+        PW = input()
+        if PW == "test":
+            # print("its true")
+            break
+    print("Granted")

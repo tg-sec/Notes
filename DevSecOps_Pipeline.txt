@@ -1,0 +1,6 @@
+Task 1.
+    1. setup two Machine (Jenkins and Production)
+    2.
+Task 2.
+Task 3.
+Task 4.

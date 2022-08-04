@@ -1,0 +1,20 @@
+#reference
+python use the memory location to store a value and to access value use reference.
+
+>>> a = 1
+>>> id(a)
+2732235450672
+>>> b = a
+>>> id(b)
+2732235450672
+>>> b = 2
+>>> id(b)
+2732235450704
+
+#passing parameter in function
+def test(name):
+    name.append("hello")
+sam = [1, 2, 3, 4]
+print(sam)
+test(sam)
+print(sam)

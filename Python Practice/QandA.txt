@@ -1,0 +1,49 @@
+#collatz no program
+'''
+def collatz(Number):
+    """this is for collztz Number Program"""
+    if Number % 2 == 0:
+        print(Number // 2)
+        return Number // 2
+    elif Number % 2 == 1:
+        print(3 * Number + 1)
+        return 3 * Number + 1
+N = input("Enter the Number:")
+try:
+    while N != 1:
+        N = collatz(int(N))
+except ValueError:
+    print("Its not Integer")
+
+'''
+#concating stings
+print("enter the name1:")
+no1 = input()
+print("enter the name2:")
+no2 = input()
+print("enter the name3:")
+no3 = input()
+print("enter the name4:")
+no4 = input()
+print("enter the name5:")
+no5 = input()
+
+print(no1 + ' ' + no2 + ' ' + no3+' ' + no4+' ' + no5)
+
+#comma code
+'''
+this is a comma code
+"""
+def test(name):
+    '''this is a comma code'''
+    b_count = len(name) - 1
+    for i, j in enumerate(name):
+        if i == b_count:
+            j = 'and ' + j
+        else:
+            j = j + ',' + ' '
+        print(j, end='')
+sam = list(input())
+sam = ['apples', 'bananas', 'tofu', 'cats', 'test']
+test(sam)
+'''

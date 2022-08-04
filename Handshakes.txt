@@ -1,0 +1,3 @@
+HTTP - 3-way Handshake
+HTTPS Handshake
+https://www.cloudflare.com/en-in/learning/ssl/what-happens-in-a-tls-handshake/

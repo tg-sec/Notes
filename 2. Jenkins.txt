@@ -1,0 +1,338 @@
+DSL - Domain-specific Language
+    node keyword that tells Jenkins that you will be programmatically selecting a node (formerly “master” or “slave”) that you want to execute this part of your program on.
+
+Blue Ocean - GUI for pipeline in jenkins
+
+Jenkins HOME Dir - /var/lib/jenkins
+
+Jenkinsfile (as a marker) - you can take the DSL code and save it externally as a text file with your source code called Jenkinsfile.
+    can store multiple Jenkinsfile in single project.
+
+-------------------------------------------------------------
+Project type -
+    Pipeline - Pipeline type of project is intended for creating pipelines.uses Jenkins DSL.
+    Folder - way to group projects together.Grouping or project Structuring.
+    Organization - mechanism for grouping repositories into “organizations.” (eg. Jenkinsfile, Secrets)
+    Multibranch Pipeline - can create new Pipeline projects for each branch it detects in the source control repository.
+    Freestyle project - Jenkins still supports the traditional workhorse of jobs
+    Multi-configuration - run project on different set of configuration
+
+---------------------------
+manage Jenkins -
+    System Configuration  - Server Configuration
+    Global Tool Configuration - tool Configuration (eg. git,java,gradle )
+
+-------------------------------------------------------------------------------------------
+Four areas of Jenkins
+    1. two styles of syntax that can be used for creating pipelines (Declarative, Scripted)
+    2. systems used to run the pipeline processes (server,nodes)
+    3. basic structure of a pipeline
+    4. support environment that jenkins provide (tools,plugins)
+
+----------------------------------------------------------------------------------
+Pipelines syntax -
+
+    Scripted Syntax (Old way) -
+        Scripted Jenkins pipeline syntax runs on the Jenkins master with the help of a lightweight executor (node/agent). It uses very few resources to convert the pipeline into atomic commands.
+
+        imperative style meaning it is based on defining the logic and the program flow in the pipeline script itself.depends on groovy language.things like error checking and dealing with exceptions (try-catch-finally) .
+
+        eg.
+            // Scripted Pipeline
+            node('worker_node1') {
+            stage('Source') {
+                    sh "echo 'Hello World'"
+                }
+            }
+
+    Declarative Syntax (New Way) -
+        Declarative pipeline syntax offers a simple way to create pipelines. It consists of a predefined hierarchy to create Jenkins pipelines. It provides you the ability to control all aspects of a pipeline execution in a simple, straightforward manner.
+
+        Pipelines coded in the declarative style are arranged in clear sections that describe (or “declare”) the states and outcomes we want in the major areas of the pipeline, rather than focusing on the logic to accomplish it.
+
+        eg.
+            pipeline {
+            agent any
+            stages {
+                stage('Example') {
+                    steps {
+                        echo 'Hello World'
+                        }
+                    }
+                }
+            }
+
+-----------------------------------------------------------------------------------------
+Masters - primary controlling system for a Jenkins instance. has all.all Jenkins configuration and options and the full list of jobs
+Nodes - system that can run Jenkins jobs.(sub-masters)
+Agents - slave that execute the job.to handle processing the individual jobs. (eg, OS,Docker,Kubernetes)
+Executors - an executor is just a slot in which to run a job on a node/agent. A node can have zero or more executors. The number of executors defines how many concurrent jobs can be run on that node.
+
+------------------------------------------------------------------------
+Process: create Node
+Dashboard -> Manage Jenkins -> Manage Nodes,clouds -> create one
+
+-------------------------------------------------------------------------
+Working with DSL
+
+node - worker machine
+stage - group of setting,command,logic
+steps - actual Jenkins DSL commands.A step is the lowest level of functionality
+
+---------------------------------------------------------------------------------------
+Triggers - trigger build to pipeline when specified action happens
+
+    M -> minutes | H - Hr | DOM -> day of month | M -> month DOW -> day of week
+
+    cron - cron style trigger regular time interval re-trigger the job.
+
+    pollSCM - regular interval at which Jenkins should check for new source changes. If new changes exist, the Pipeline will be re-triggered.
+
+    Build after other projects are build -  option allows you to start your project building after one or more other projects.
+
+    Build Periodically - start jobs at certain time intervals.
+
+    GitHub Hook Trigger - github hooks to any changes in source re triggered
+
+--------------------------------------------------------------------------------------------
+User Input - if Jenkins jobs is the ability to change their behavior based on user input. Jenkins provide this construct to setup pipeline.
+
+    Scripted pipeline - input,custom ID,msg,Ok button,parameters,boolean,choice,credentials,file,
+    Declarative Pipeline - parameters Directive used after the agent Directive
+
+Flow Control Options - controlling the flow through the pipeline. This includes handling cases that might otherwise cause your pipeline to stop or fail.
+        eg. timeout,retry,sleep,waitUntil
+
+Concurrency - locking the resource
+            lock('worker_node1') {
+            sh 'gradle clean build -x test'
+            }
+
+Stash (save) and Unstash  (retrieve) - saving and retrieving (respectively) files between nodes and/or stages in a pipeline.it is better to use an artifact repository.
+
+Post-Processing - post build action mention in pipeline
+    Scripted Pipeline - Scripted Pipelines do not have built-in support for post-build processing.so old pipeline use try-catch-finally mechanism.
+
+    Declarative pipeline - post directive is used in new pipeline.always,success and failure sub-parameter are used in it.
+
+-------------------------------------------------------------------------------------------------
+Notification and reports
+    Email -
+        Scripted Pipeline - use try-catch-finally block in pipeline to send Mail notification
+        Declarative Pipeline - use post directive to send Mail notification
+
+        eg, slack,hipchat
+
+    Reports -
+        share project wise report to user.
+
+        eg. HTML Publisher plugin
+
+-------------------------------------------------------------------------------------------------
+Access and Security
+    Authentication -how users can identify themselves to the system
+    Authorization - what permissions authorized users have
+    list of security -
+        disable remember me
+        security ralm - access control - Jenkins own DB,LADP,Servlet container
+        Authorization - access control - open access,legacy mode,logged-in users,matrix-based security, project based matrix security
+
+    JNLP - Java network launch protocol - configuring the TCP port for agents launched through the JNLP process
+
+Credential Scopes -
+    Global - the default scope and the one to use generally to ensure that credentials are available to jobs in Jenkins
+    System - associated with the root context, the Jenkins system.
+    User - scope is per-user
+
+Credential Domains - way to group together, under a common domain name,sets of credentials.
+
+    System credentials provider (Jenkins credentials provider) - This exposes credentials at the root context (System scope)
+    User credentials provider - exposes a per-user credential store for a use (User Scope)
+    Folder credentials provider - provided by the Folders plugin ( folder plugin for Organization)
+    BlueOcean credentials provider - Blue Ocean interface (only for Blue Ocean)
+
+        Credential Providers
+            excluded -
+            included -
+
+RBAC - Role-Based Access control
+    plugin - Role-based Authorization Strategy plugin
+
+    roles
+    roles assign
+    user
+    group
+
+--------------------------------------------------------------------------------------------
+Extending Your Pipeline
+    Shared Libraries in Pipeline -
+        Trusted - ones that can call/use any methods in Java, the Jenkins API, Jenkins plugins, the Groovy language
+        Untrusted - run in the Groovy Sandbox
+        internal - libraries in the project directory.can use gitworkflow.
+        external - has to use @Library annotation to access in project
+            eg. @Library('libname@version')_
+        third-party libraries - @Grab annotation .pull in any dependency from a Maven repository
+
+--------------------------------------------------------------------------------------------------
+Declarative Pipeline in details
+
+    pipeline - beginning and end of the code
+        agent - directive to specify on which node execute the pipeline eg. (worker)
+        stages -  group all individual stage in one place
+            stage - collection of steps
+                steps - smallest execution unit in pipeline
+            post - post-build processing setup in this section eg. (Conditions)
+
+eg.
+    pipeline {
+        agent any
+        stages {
+            stage ('stage 1') {
+                steps {
+                    sh "echo $USER"
+                }
+            }
+            stage ('stage 2'){
+                steps {
+                    sh "echo $SHELL"
+                }
+            }
+         }
+    }
+
+Conditionals - when,if can be use in steps section
+
+Detailed -
+
+    pipeline                            - mandatory
+        agent                           - mandatory
+        environment                     - optional
+        tools                           - optional
+        options                         - optional
+        triggers                        - optional
+        parameters                      - optional
+        libraries                       - optional
+        stages                          - mandatory
+            stage                       - mandatory
+                agent                   - optional
+                environment             - optional
+                tools                   - optional
+                    steps               - mandatory
+                        DSL Statement   - mandatory
+                    post                - optional
+        post                            - optional
+
+agent -
+        agent any
+        agent none
+        agent {label "<label_name>"}
+        agent {docker "<image_name>"}
+        agent {docker {<elements>}}
+        agent {dockerfile true}
+        agent {dockerfile {<elements>}}
+
+environment - specify names and values for environment variables that are then accessible within the scope of your pipeline.
+        environment { TIMEZONE = "eastern"
+                      ADMIN_USER = credentials('admin-user')
+                 }
+
+tools - Global Tool Configuration screen to configure versions, paths, and installers for tools. Once configured there, the tools directive allows us to specify which of these we want to have auto installed and made available in the path on the agent we’ve chosen.
+        tools {
+            gradle "gradle3.2"
+            }
+
+options - specify properties and values for predefined options that should apply across the pipeline. in general tab.
+        options {
+            buildDiscarder(logRotator(numToKeepStr:’3’))
+            }
+
+triggers - specify what kinds of triggers should initiate builds in your pipeline. (cron, pollSCM, upstream, and githubPush)
+        triggers {
+            cron(10 * * * *)
+            }
+
+parameters - specify project parameters for a Declarative Pipeline. in build tab "This build is parameterized"
+        parameters {
+            booleanParam(defaultValue: false, description: 'test run?', name: 'testRun')
+            }
+
+libraries - import shared libraries so that code contained in them can then be called and used.
+        libraries {
+            lib("mylib@master")
+            lib("alib")
+            }
+
+stages - collection of individual stage is wrapped by the stages section. (used in both pipelines )
+        stages {
+            stage('name1') {
+            steps {
+            }
+
+stage - stage has at least a name and one or more DSL steps.
+        stage ("stage 1") {
+            steps {
+            }
+        }
+
+steps - indicates the actual work that will happen in the stage. (Conditionals can be used in steps)
+        steps {
+            sh "echo $USER"
+        }
+
+post - it gets executed at the end of a pipeline or stage if the conditions are met. (Post-Build Processing )
+        post {
+            always {
+                echo "Build stage complete"
+            }
+            failure{
+                echo "Build failed"
+                mail body: <some text>, subject: 'Build failed!',
+                to: 'devops@mycompany.com'
+            }
+            success {
+                echo "Build succeeded"
+                archiveArtifacts '**/*'
+            }
+        }
+
+we can combine Scripted pipeline in Declarative Pipeline just add Scripted pipeline code outside the declarative pipeline Statement ("{}").
+---------------------------------------------------------------------------------------------
+The Blue Ocean Interface - graphical representation of pipeline processing
+
+----------------------------------------------------------------------------------------------
+Artifact Management
+
+Public repositories
+    Ivy
+    jfrog
+    maven
+    jcenter
+
+declarative pipeline with artifact Management -
+        pipeline {
+        agent any
+        tools {
+            gradle "gradle7"
+        }
+        environment {
+                USER = 'jenkins2'
+                PATH = "/home/diyuser2:$PATH"
+        }
+        stages {
+            stage ('stage 1') {
+                steps {
+                    sh "gradle -version"
+                }
+            }
+        }
+    }
+
+fingerprinting - to determine which versions of artifacts were associated with which jobs.providing a sort of cross-referencing between versions of artifacts and the jobs/runs.
+
+---------------------------------------------------------------------------------
+Integrating Containers
+
+1. create global configuration on jenkins
+2. create docker custom image with tool you want to work
+3. then jenkins will run that image on system and mount as node agent on master
+4. then in pipeline you can use this node as agent to execute the process.

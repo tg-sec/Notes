@@ -1,0 +1,115 @@
+##File Operation
+
+#to open file and reading mode
+>>> f = open('test.txt','r')
+
+#read full file
+>>> f.read()
+'Allen Keele is a recognized subject matter expert, consultant, and business systems\narchitect for enterprise risk management (ERM), information security management,\ngovernance/risk/compliance (GRC), business continuity management (BCM), fraud\ncontrol, and purchasing & supply management. He is a 6-time published author, and\nhas achieved over twenty-fi ve professional accreditations including CISA, CISM, CISSP,\nISO 31000 CICRA, ISO 27001 CICA, ISO 27001 Lead Auditor, ISO 22301 Certifi ed\nBusiness Continuity Manager, and Certifi ed Fraud Examiner. Allen is often featured as\na speaker at conferences, expositions, and functions for professional organizations and\nassociations such as the Information Systems Audit and Controls Association (ISACA), the\nInstitute for Internal Auditors (IIA), Ernst & Young, and many others.\n'
+
+#read single line from file
+>>> f.readline()
+'this is a test para\n'
+
+#iterate file contain through for loop
+>>> f = open('test.txt')
+>>> for a in f:
+...     print(a, end=' ')
+...
+Allen Keele is a recognized subject matter expert, consultant, and business systems
+ architect for enterprise risk management (ERM), information security management,
+ governance/risk/compliance (GRC), business continuity management (BCM), fraud
+ control, and purchasing & supply management. He is a 6-time published author, an
+
+#in list
+ >>> f = open('test.txt')
+>>> a = list(f)
+>>> a
+['Allen Keele is a recognized subject matter expert, consultant, and business systems\n', 'architect for enterprise risk management (ERM), information security management,\n', 'governance/risk/compliance (GRC), business continuity management (BCM), fraud\n', 'control, and purchasing & supply management. He is a 6-time published
+
+#in tuple
+>>> f = open('test.txt')
+>>> a = tuple(f)
+>>> a
+('Allen Keele is a recognized subject matter expert, consultant, and business systems\n', 'architect for enterprise risk management (ERM), information security management,\n',
+
+#open file and read/write and reversed in file
+>>> f = open('test.txt')
+>>> f1 = open('test2.txt','w')
+>>> for i in reversed(list(f)):
+...     print(i, file=f1)
+...
+>>> f.close()
+>>> f1.close()
+>>> f = open('test2.txt')
+>>> f.read()
+'Institute for Internal Auditors (IIA), Ernst & Young, and many others.\n\nassociations such as the Information Systems Audit and Controls Association (ISACA), the\n\na speaker at conferences, expositions, and functions for professional organizations and\n\nBusiness Continuity Manager, and Certifi ed Fraud Examiner. Allen is often featured as\n\nISO 31000 CICRA, ISO 27001 CICA, ISO 27001 Lead Auditor, ISO 22301 Certifi ed\n\nhas achieved over twenty-fi ve professional accreditations including CISA, C
+
+#syntax
+>>> f = open('test.txt')
+>>> f1 = open('test1.txt','w')
+>>> for i in list(f):
+...     print(i, end='', file=f1)
+...
+>>> f.close()
+>>> f1.close()
+
+--> close first open file and then close second file
+
+
+#with..as structure for file manipulation
+##parsing as list in file
+>>> with open('text.txt') as i, open('test2.txt','w') as f1:
+...     for x in list(i):
+...             print(x, file=f1)
+
+##parsing as data in file
+>>> with open('test.txt') as i, open('test3.txt','w') as f1:
+...     for x in i:
+...             print(x, file=f1)
+
+# read in for loop
+>>> def tests():
+...     with open('test.txt') as f:
+...             print(f.read())
+...
+>>> tests()
+Allen Keele is a recognized subject matter expert, consultant, and business systems
+architect for enterprise risk management (ERM), information security management,
+governance/risk/compliance (GRC), business continuity management (BCM), fraud
+control, and purchasing & supply management. He is a 6-time published author, and
+has achieved over twenty-fi ve professional accreditations including CISA, CISM, CISSP,
+ISO 31000 CICRA, ISO 27001 CICA, ISO 27001 Lead Auditor, ISO 22301 Certifi ed
+
+#read line by line
+>>> with open('test.txt') as f, open('test2.txt','w') as f2:
+...     print(f.read(), end='',file=f2)
+...
+
+>>> with open('test.txt') as f, open('test2.txt','w') as f2:
+...     for l in f:
+...             print(l, file=f2)
+
+#print dict in file
+>>> def ab(a):
+...     with open('test1.txt','w') as f:
+...             for i,j in a.items():
+...                     print(i,file=f)
+...                     print(j,file=f)
+...
+>>> ab(a)
+
+#count word line and char from file
+>>> def stat(file):
+...     lines = 0
+...     chat = 0
+...     word = 0
+...     with open(file) as f:
+...             for li in f:
+...                     lines += 1
+...                     chat += len(li)
+...                     word += len(li.split())
+...             print(lines,chat,word)
+
+>>> stat('test.txt')
+10 826 113

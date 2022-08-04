@@ -1,0 +1,320 @@
+
+Strongest Encryption - AES256
+
+-------------------------------------------------------------------------------------------
+IAM - Identity and Access Management - AWS Identity and Access Management (IAM) is a web service that helps you securely control access to AWS resources. You use IAM to control who is authenticated (signed in) and authorized (has permissions) to use resources.
+
+IAM Component:
+    IAM Resources
+        The user, group, role, policy, and identity provider objects that are stored in IAM. As with other AWS services, you can add, edit, and remove resources from IAM.
+
+    IAM Identities
+        The IAM resource objects that are used to identify and group. You can attach a policy to an IAM identity. These include users, groups, and roles.
+
+    IAM Entities
+        The IAM resource objects that AWS uses for authentication. These include IAM users and roles.
+
+    Principals
+        A person or application that uses the AWS account root user, an IAM user, or an IAM role to sign in and make requests to AWS. Principals include federated users and assumed roles.
+
+Process: Create IAM for Resource
+Group - An IAM user group is a collection of IAM users. User groups let you specify permissions for multiple users, which can make it easier to manage the permissions for those users
+
+User - entity that you create in AWS to represent the person or application that uses it to interact with AWS. A user in AWS consists of a name and credentials
+
+       Access key - Programmatic access
+        Enables an access key ID and secret access key for the AWS API, CLI, SDK, and other development tools.
+       Password - AWS Management Console access
+        Enables a password that allows users to sign-in to the AWS Management Console.
+
+Roles - An IAM role is an IAM identity that you can create in your account that has specific permissions. An IAM role is similar to an IAM user, in that it is an AWS identity with permission policies that determine what the identity can and cannot do in AWS. However, instead of being uniquely associated with one person, a role is intended to be assumable by anyone who needs it. Also, a role does not have standard long-term credentials such as a password or access keys associated with it. Instead, when you assume a role, it provides you with temporary security credentials for your role session.
+
+----------------------------------------------------------------
+EC2 - Elastic Compute Cloud -
+Security Group - First line of Defense for Instances. A security group acts as a virtual firewall, controlling the traffic that is allowed to reach.
+
+Tag -  tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value.You can use tags to organize your resources, and cost allocation tags to track your AWS costs on a detailed level
+
+Types of EC2 Instance:
+    General Purpose Instances - Instance balances computing, memory, and networking resources
+
+    Compute Optimized Instances - Instances are best there is a need for high compute.
+
+    Memory Optimized Instances - Instances are best when huge amounts of data need to be preloaded before running the app.This type can deliver large dataset workloads fast.
+
+    Storage Optimized Instances - Instances are designed to deliver many inputs as fast as possible.This type is best when you have large datasets on local storage.
+
+    Accelerated Computing Instances - Instances are best for graphics applications and streaming.This type use hardware accelerators.
+
+#Q. How to recover lost private key of an EC2 instance ???
+https://aws.amazon.com/premiumsupport/knowledge-center/user-data-replace-key-pair-ec2/
+https://cloudsolutionsonline.blogspot.com/2021/11/connect-to-linux-ec2-instance-if-ssh.html?m=1
+Ans.
+  1. With snapshot
+      1. From your AWS console stop the instance.
+      2. Create a snapshot of the instance.
+      3. Create a duplicate instance from the resulting snapshot and create a new Key Pair.
+
+    Once the instance is up and running, you would be able to log into the new instance using the new key pair. The new instance is identical in every aspect to the original instance and you can carry on your work from there. If you were using an elastic IP, then dissociate it from the old instance and associate it with the new instance and make sure to update DNS as well.
+
+  2. instance setting with USER_DATA
+  3. Use AWS Systems Manager
+  4. EC2 Serial Console port
+  5. Use Amazon EC2 Instance Connect
+
+--------------------------------------------------------------------
+VPC - Virtual Private Cloud - virtual networking environment, including resource placement, connectivity, and security.
+
+Internet Gateways - An internet gateway is a horizontally scaled, redundant, and highly available VPC component that allows communication between your VPC and the internet. An internet gateway enables resources (like EC2 instances) in your public subnets to connect to the internet if the resource has a public IPv4 address or an IPv6 address
+
+NAT Gateway - You can use a NAT gateway so that instances in a private subnet can connect to services outside your VPC but external services cannot initiate a connection with those instances.uses IPv4.
+
+Ingress only NAT Gateway - use with IPv6 traffic only.
+
+Subnets - Segmentation of the network called subnets.in AWS Private (Don't have internet Access) and Public (Internet Facing,DMZ) Subnets are important.
+
+Route Table - A route table contains a set of rules, called routes, that determine where network traffic from your subnet or gateway is directed.
+
+Endpoints - A VPC endpoint enables connections between a virtual private cloud (VPC) and supported services, without requiring that you use an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Therefore, your VPC is not exposed to the public internet.
+    interface - send traffic to endpoint services like network load balancer.
+    gateway - send the traffic tp S3 or DynamoDB service in private IP.Available only For S3 and AWS DynamoDB
+
+Process: Allow EC2 instance to internet access using Bastion Host
+VPC -> Internet Gateways (Attach to VPC) -> Subnets (Public and Private) - > Route Table - integrate the Internet Gateway and Subnet in one place (Add Internet Gateway, Associate Subnet) -> EC2 (create instance in Public Subnets)
+
+Process: Allow EC2 instance internet access with NAT Gateway
+VPC -> Subnets (Private/Public) -> NAT Gateway (Only with Public Subnet) -> Route Table - add NAT Gateway in route table entry (Private Subnet Route) -> EC2 (Create Instance in Private Subnet)
+
+Process: Allow EC2 instance internet access with NAT Instance
+VPC -> Subnets (Private/Public) -> EC2 - Public Subnet with NAT software installed instance (instance network setting - Disabled source / destination checking) ->  Route Table - add NAT instance route in Private Route table (Private Route table) - Curl site from Private instance
+
+-------------------------------------------------------------
+Elastic Load Balancer - automatically distributes your incoming traffic across multiple targets, such as EC2 instances, containers, and IP addresses, in one or more Availability Zones.
+
+    Both Are Mandatory:
+    Load Balancer - A What type of LB should be launch
+    Target Groups - A LB need target to divert the traffic so this are the target configuration.
+
+Type of Load Balancer
+Application Load Balancers (For Application) - An Application Load Balancer functions at the application layer, the seventh layer of the Open Systems Interconnection (OSI) model. After the load balancer receives a request, it evaluates the listener rules in priority order to determine which rule to apply, and then selects a target from the target group for the rule action.The default routing algorithm is round robin.
+
+Network Load Balancers (ultra-high performance, TLS offloading at scale) - A Network Load Balancer functions at the fourth layer of the Open Systems Interconnection (OSI) model. It can handle millions of requests per second. After the load balancer receives a connection request, it selects a target from the target group for the default rule. It attempts to open a TCP connection to the selected target on the port specified in the listener configuration.
+
+Gateway Load Balancers (third-party virtual appliances) - A Gateway Load Balancer operates at the third layer of the Open Systems Interconnection (OSI) model, the network layer. It listens for all IP packets across all ports and forwards traffic to the target group that's specified in the listener rule. (Appliances like F5,Fortinet,paloalto,)
+
+Classic Load Balancers - This increases the fault tolerance of your applications. Elastic Load Balancing detects unhealthy instances and routes traffic only to healthy instances.mostly work with the EC2 instances.
+
+Classic Load Balancer:
+
+VPC -> Subnets -> IG -> Route Table (Main Only) -> EC2 - HTTP Service is running on port 80 (2 Instance) -> Load Balancing -> Target Groups - create Target group -> Load Balancer - add targets in it -> Test with DNS Name of LB
+-------------------------------------------------------------------
+EC2 Auto Scaling - Amazon EC2 Auto Scaling helps you maintain application availability and allows you to automatically add or remove EC2 instances according to conditions you define.The EC2 Auto Scaling service enables automatically launching EC2 instances based on pre-defined conditions called scaling policies.
+
+    Both Are Mandatory:
+    Launch Configuration - Instance Configuration and service on instance
+    Auto Scaling Groups - At what Condition EC2 should auto scale
+
+Precess: Single Instance Auto Scaling
+VPC -> Subnets -> IG -> Route Table (Main Only) -> Auto Scaling -> Launch Configuration (Which instance to Launch in autoscaling) ->Auto Scaling Groups (what type of Scaling policy what to apply - A CONDITION) -> instance will start Automatically
+
+Process:EC2 Auto Scaling with Load Balancer
+VPC -> Subnets -> IG -> Route Table (Main Only) -> EC2 - HTTP Service is running on port 80 (2 Instance) -> Load Balancing -> Target Groups - create Target group -> Load Balancer - add targets in it -> Auto Scaling -> Launch Configuration (Which instance to Launch in autoscaling) -> Auto Scaling Groups (what type of Scaling policy what to apply - A CONDITION) -> instance will start Automatically
+-----------------------------------------------------------------------------
+RDS - Relational Database Service - a web service that makes it easier to set up, operate, and scale a relational database in the AWS Cloud. It provides cost-efficient, resizable capacity for an industry-standard relational database and manages common database administration tasks.
+
+DB Engines:
+    MySQL
+    MariaDB
+    PostgreSQL
+    Oracle
+    Microsoft SQL Server
+
+RDS Component:
+    DB instances - A DB instance is an isolated database environment in the AWS Cloud. The basic building block of Amazon RDS is the DB instance.
+
+    DB Instance Class - A DB instance class determines the computation and memory capacity of a DB instance.(eg db.m6g,db.m6g.2xlarge)
+
+    DB Instance Storage - Amazon EBS provides durable, block-level storage volumes that you can attach to a running instance.type of storage are SSD, Magnetic, IOPS
+
+DB subnet group - Subnets are segments of a VPC's IP address range that you designate to group your resources based on security and operational needs. A DB subnet group is a collection of subnets (typically private) that you create in a VPC and that you then designate for your DB instances
+
+Process: Launch RDS service in Cloud
+VPC -> Subnets -> IG -> Route Table (Main Only) -> RDS -> mysql -> Security Group (Only Local Access no public) -> EC2 (To access RDS DB thi is best practice) -> try to login via Instance.
+-----------------------------------------------------------------------------------------
+DynamoDB -NoSQLFully Managed Service
+
+--------------------------------------------------------------------------------------------
+S3 - Simple Storage Service -  object storage -
+
+#check Lifecycle management
+https://www.youtube.com/watch?v=OgRT88DjQos
+
+object - a file and any metadata that describes the file
+Bucket - a container for objects
+
+Types of S3:
+    S3 Standard - Frequently accessed data (more than once a month) with millisecond access.
+
+    S3 Standard-IA (infrequent access) - designed for long-lived and infrequently accessed data. least 30 days. Store data in multi Availability Zone with most resilient.
+
+    S3 One Zone-IA (infrequent access) - designed for long-lived and infrequently accessed data. least 30 days.older data that is accessed infrequently. store data in only one Availability Zone.
+
+    S3 Glacier Instant Retrieval - Use for archiving data that is rarely accessed and requires milliseconds retrieval.similar to S3 Standard-IA with cost. Least 90 days.
+
+    S3 Glacier Flexible Retrieval - Use for archives where portions of the data might need to be retrieved in minutes.Least 90 days. can request free bulk retrievals in up to 5-12 hours.least 180 days.
+
+    S3 Glacier Deep Archive - Use for archiving data that rarely needs to be accessed.Least 180 Days.retrieval time of 12 hours.Cost is at lowest.
+
+    S3 Outposts - Outposts delivers object storage to your on-premises AWS Outposts environment.
+
+    S3 Intelligent-Tiering - automatically reduces your storage costs on a granular object level by automatically moving data to the most cost-effective access tier based on access frequency, without performance impact, retrieval fees, or operational overhead.
+
+S3 Bucket Lifecycle:
+Existing and new objects
+
+When you add a Lifecycle configuration to a bucket, the configuration rules apply to both existing objects and objects that you add later. For example, if you add a Lifecycle configuration rule today with an expiration action that causes objects with a specific prefix to expire 30 days after creation, Amazon S3 will queue for removal any existing objects that are more than 30 days old.
+
+Process: Access Bucket in Private subnet with EC2 instance
+VPC -> Subnets -> EC2 (Public and Private) -> S3 (create Bucket) -> VPC -> Endpoints (AWS service,s3 service) -> Go to Private subnet EC2 try to access it.
+
+Use Policy Generator to create a policy. eg S3, SQS, VPC Endpoint, IAM, SNS Topic
+
+S3 Resource-Based Policy:
+{
+  "Id": "Policy1653576314760",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1653576298567",
+      "Action": "s3:*",
+      "Effect": "Deny",
+      "Resource": "arn:aws:s3:::everspintestbucket",
+      "Condition": {
+        "NotIpAddress": {
+          "aws:SourceIp": "115.97.178.39"
+        }
+      },
+      "Principal": "*"
+    }
+  ]
+}
+
+Bucket Access Policy -
+    Block public access to buckets and objects granted through new access control lists (ACLs) -
+
+    S3 will block public access permissions applied to newly added buckets or objects, and prevent the creation of new public access ACLs for existing buckets and objects. This setting doesn’t change any existing permissions that allow public access to S3 resources using ACLs.
+
+    Block public access to buckets and objects granted through any access control lists (ACLs) -
+    S3 will ignore all ACLs that grant public access to buckets and objects.
+
+    Block public access to buckets and objects granted through new public bucket or access point policies -
+    S3 will block new bucket and access point policies that grant public access to buckets and objects. This setting doesn't change any existing policies that allow public access to S3 resources.
+
+    Block public and cross-account access to buckets and objects through any public bucket or access point policies -
+    S3 will ignore public and cross-account access for buckets or access points with policies that grant public access to buckets and objects.
+
+---------------------------------------------------------------------------------
+EBS - Elastic Block Store - its block level storage volumes for use with EC2 instances. EBS volumes behave like raw, unformatted block devices.
+
+IOPS - input/output process per second
+
+Type sof EBS:
+    SSD: size - 4 GB to 64 TB
+    General Purpose SSD - Provides a balance of price and performance. We recommend these volumes for most workloads. - 16000 IOPS
+    Provisioned IOPS SSD - Provides high performance for mission-critical, low-latency, or high-throughput workloads. - 256000 IOPS
+
+    HDD: size - 256 GB to 16 TB
+    Throughput Optimized HDD -  A low-cost HDD designed for frequently accessed, throughput-intensive workloads. - 500 IOPS
+    Cold HDD - The lowest-cost HDD design for less frequently accessed workloads. - 250 IOPS
+
+    General Purpose: Cost effective
+    gp2 - General Purpose SSD volumes - 3000 IOPS
+    gp3 - General Purpose SSD volumes - 16000 IOPS
+
+    EBS is fast IOPS Storage disk can be deleted after EC2 Instance get terminated.
+
+Process: while creating EC2 Instance add EBS Volume or create Separately.
+VPC -> Subnets -> IG -> RT -> EC2 -> Add Storage with extra Volume - set on termination delete to no (while creating EC2 Instance)
+or you can create EBS then attach to EC2 Instance.
+
+----------------------------------------------------------------------
+EFS - Elastic File System - simple, serverless, set-and-forget elastic file system for use with AWS Cloud services and on-premises resources. EFS Support nfs4 version.
+
+#check Lifecycle management
+  Transition into IA
+    None
+    7 days since last access
+    14 days since last access
+    30 days since last access
+    60 days since last access
+    90 days since last access
+  Transition out of IA
+    None
+    On first access
+
+Type of EFS:
+    EFS Standard - Frequently accessed data requiring the highest durability and availability.
+    EFS Standard IA - Long lived, infrequently accessed data requiring the highest durability and availability.
+    EFS One Zone - Frequently accessed data that doesn’t require highest levels of durability and availability.
+    EFS One Zone IA - Long lived, infrequently accessed data that doesn’t require highest levels of durability and availability.
+
+Process: Mount EFS on 2 EC2 Instance
+VPC -> Subnets -> IG -> RT -> EC2 -> Security Policy (Separately For EFS Access add both EC2 Instance SG as source) -> EFS (Use custom button ) -> Login to EC2 -> attache EFS on EC2
+
+---------------------------------------------------------------------
+AWS Systems Manager - AWS Systems Manager is a collection of capabilities to help you manage your applications and infrastructure.
+it use SSM Agent to keep connection with EC2 instance.
+
+#more info on AWS System Manager
+
+Process: If user forget password or pair key is lost use SSM Agent
+IAM -> Roles (AmazonSSMFullAccess) -> EC2 (Assign the role to EC2 instance) -> AWS System Manager -> Node Management -> Session Manager
+
+--------------------------------------------------------------------
+ECS - Elastic container Service
+
+Fargate is a fully managed container service that automatically allocates computing resources to run containers with scaling capabilities. To best understand Amazon's Elastic Container Service let's break it into components:
+
+    Container: packaging of an application including code, runtime, system tools, libraries, and everything else needed to run an application (a container is created from an image);
+    Cluster: a logical group of tasks or services (this lab will create an ECS cluster containing a single task);
+    Task: specified in JSON format, a task defines what to do (the application itself), where to run it (minimum infrastructure requirements), and how to run it (logging, scaling configurations, security configurations, etc.);
+    Service: number of instances of tasks to run and launching parameters.
+
+  ECS Types:
+    AWS Fargate Launch Type Model
+    Amazon EC2 Launch Type Model
+    Amazon ECS on AWS Outposts
+
+-----------------------------------------------------------------------------
+VPC Peering
+  A VPC peering connection is a networking connection between two VPCs that enables you to route traffic between them using private IPv4 addresses or IPv6 addresses. Instances in either VPC can communicate with each other as if they are within the same network. You can create a VPC peering connection between your own VPCs, or with a VPC in another AWS account. The VPCs can be in different regions (also known as an inter-region VPC peering connection).
+
+Process: 2 VPC communicate each other with 2 EC2 instance.
+  VPC (2 VPC) -> Subnets (Each VPC) -> IG (Each VPC IG) -> EC2 (1 per Subnet of VPC) VPC - Peer Connection -> Create connection -> RT (Each VPC RT) -> Add Route Table entry of each other VPC RT and Peer connection in Source. -> try to login via EC2 with each other.
+
+---------------------------------------------------------------------------------
+Route 53
+
+  Type of Zones -
+    Public hosted zones - contain records that specify how you want to route traffic on the internet.
+    Private hosted zones - contain records that specify how you want to route traffic in a VPC
+
+  DNS Record Type -
+    A - IPv4 Address record (Domain to ip)
+    AAAA - IPv6 Address Record (domain to ip)
+    CNAME - alias name to a true or canonical domain name.used to map a subdomain such as www or mail
+    MX - Mail Server record
+    NS - Nameserver record
+    SOA - Start of Authority
+    PTR - reverse address of A or AAAA record (IP to domain)
+
+-----------------------------------------------------------------------------------
+SuperPowerAccess for developer but not allow to change users and groups
+Use IAM Access Analyzer to create Least Privilege access to user based on cloudtrail event
+VPC CIDR 192.168.0.0/16
+    First 4 and Last 1 ip are reserved by AWS in all subnets
+        .0 Network address.
+        .1 Reserved by AWS for the VPC router.
+        .2 Reserved by AWS for the IP address of the DNS server. This is always set to the VPC network range plus two.
+        .3 Reserved by AWS for future use.
+        .255 Network broadcast address. Broadcast in a VPC is not supported.

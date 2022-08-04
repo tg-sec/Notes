@@ -1,0 +1,59 @@
+#Turtle module to play
+
+#module methods
+
+>>> import turtle
+>>> a = turtle.Turtle()
+>>> a.forward(20)
+>>> a.backward(20)
+>>> a.right(30)
+>>> a.left(30)
+>>> a.home()
+>>> a.clear()
+>>> a.penup()       - pen up in air
+>>> a.pendown()     - pen down on paper
+>>> a.goto(100,100) - goto direct x,y coordinate
+>>> a.pensize(10)   - pen size to print
+>>> a.setheading(random.randint(0,369))
+>>> a.hideturtle()  - hide pen from the screen
+>>> a.showturtle()  - show pen from screen
+>>> a.speed(0)      - used to time to draw on screen(0 - slow 10- fastest)
+>>> a.color(0,0,0)  - color the shape
+>>> a.begin_fill()  - start filling the shape with color
+>>> a.end_fill()    - stop filling
+
+#printing
+>>> def sq(x):
+...     for _ in range(4):
+...             a.fd(x)
+...             a.rt(90)
+
+#short
+fd = forward
+bk = backward
+rt = right
+lt = left
+
+#Draw star
+>>> def star(l,n):
+...     for _ in range(n):
+...             a.fd(l)
+...             a.bk(l)
+...             a.rt(360/n)
+...
+>>> start(20,40)
+
+#draw square
+>>> for _ in range(20):
+...     a.fd(200)
+...     a.rt(90)
+
+#print star
+>>> def sq(x):
+...     for _ in range(4):
+...             a.fd(x)
+...             a.rt(90)
+...
+>>> for _ in range(10):
+...     sq(100)
+...     a.rt(360/10)

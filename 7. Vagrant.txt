@@ -1,0 +1,43 @@
+-----------------
+Basics of Vagrant
+Vagrant is a tool for building and managing virtual machine environments in a single workflow
+synced folder - it Vagrant file directory that init box
+--------------------------------------------------------------------------
+vagrant init hashicorp/bionic64 - initialize the project with Vagrant file
+vagrant box add hashicorp/bionic64 - add vagrent box offline
+vagrant up - spin up the vagrant box
+vagrant ssh - login to spined up box
+vagrant destroy - destroy the spined up box
+vagrant halt - stoping the box
+
+-------------------------
+providers
+vmware
+virtualBox
+docker
+Hyper-V
+-----------------------------------
+Vagrant basic configuration
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "hashicorp/bionic64"
+end
+
+--
+provisioning means starting box and actually allocation resource
+Vagrant.configure("2") do |config|
+  config.vm.box = "hashicorp/bionic64"
+  config.vm.provision :shell, path: "bootstrap.sh"
+end
+--
+Network config
+Vagrant.configure("2") do |config|
+  config.vm.box = "hashicorp/bionic64"
+  config.vm.provision :shell, path: "bootstrap.sh"
+  config.vm.network :forwarded_port, guest: 80, host: 4567
+end
+--------------------
+provision
+file
+shell
+ansible

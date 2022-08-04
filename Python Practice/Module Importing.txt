@@ -1,0 +1,68 @@
+##Importing Module
+
+#to access all function from module use (.)
+>>> import math
+>>> math.perm(5,2)
+20
+
+#to access all function use (*).don't have to use (.) every time
+>>> from math import *
+>>> perm(5,2)
+20
+
+#to access specific function mention in from statement
+>>> from math import perm
+>>> perm(5,2)
+20
+
+#user
+>>> import math
+>>> a = math.factorial
+>>> a(4)
+24
+
+#Importing program function as module in another program
+
+'''
+--> program 1
+def is_full_stop(s):
+    return s == '.'
+
+
+def stat_from_file(f):
+    lines = 0
+    char = 0
+    word = 0
+    sent = 0
+    for line in f:
+        lines += 0
+        char += len(line)
+        word += len(line.split())
+        sent += len(list(filter(is_full_stop, line)))
+    return (lines, char, word, sent)
+
+
+def stat_from_filename(filename):
+    with open(filename) as f:
+        return stat_from_file(f)
+'''
+'''
+--> program 2
+import sys
+import textstat
+
+
+if len(sys.argv) > 1:
+    l, c, w, s = textstat.stat_from_file(sys.argv[1])
+    print(f'{l} lines,{c} char, {w} word, {s} sentence')
+'''
+'''
+import sys
+
+while True:
+    print("type exit")
+    res = input()
+    if res == "exit":
+        sys.exit()
+    print("you type", res)
+'''

@@ -1,0 +1,124 @@
+
+SAST(Static Application Security Testing) -  IBM AppScan, Veracode, GitLab, Fortify,  WhiteSource, SonarQube, , Checkmarx
+DAST(Dynamic Application Security Testing) - IBM AppScan, Veracode, GitLab, Fortify,  Detectify, Checkmarx, Netsparker, Acunetix,
+SCA(Sofware Composition Analysis) -   IBM AppScan, Veracode, GitLab, Fortify, WhiteSource, SonarQube, BlackDuck, JFrog Xray, GitHub,
+IAST(Interactive Application Security Testing) - IBM AppScan,Veracode, Synopsys Seeker
+RASP(Runtime Application Security Protection) - Fortify, OpenRASP, Imperva, Rapid7
+
+-------------------------------------------------------------------------------------------------------
+False Positive - a test result which wrongly indicates that a particular condition is present
+False Negative - a test result which wrongly indicates that a particular condition is absent
+AES256 is a strongest encryption standard based on current computing power.
+
+----------------------------------------------------------------------------------------------------------
+SDLC - Software Development Lifecycle
+SSDLC - Secure Software Development Lifecycle
+
+SDLC - Traditional way of SDLC
+
+    Phases of SDLC -
+        Requirements          - Gather Project Requirement
+        Planning              - Plan the Development phase as per Requirement Gathered
+        Designing             - Design the project module as per Plan and Requirement
+        Coding                - start implementation of code by Developer
+        Building              - once implementation is done build the application for next phase
+        Testing               - Test the build application with automated of manual testing
+        Deployment            - once application the build and testing is done ready to deploy application in Production ENV.
+        Monitor               - Monitor the Application for Production level issues.
+
+SSDLC - New way of SDLC with Security
+
+    Phases of SSDLC -
+        Requirements      - Gathering Requirement for project with keep in mind Security aspect
+        Design            - Design the implementation of application with security
+        Development       - actual development of app with secure code guideline and security tools like SAST,SCA
+        Verification      - ensure they meet the original design & requirements.great place to introduce automated security testing
+        Maintenance and Evolution - after release of application after that maintaining app in work environment.
+
+----------------------------------------------------------------------------------------------------------------------------------
+Security Framworks -
+
+    OWASP Top 10
+    OWASP API Security Top 10
+    CWE Top 25
+    SAN Top 25
+    MITRE ATT&CK v10
+    NIST SSDF 1.1
+    NIST 800-53
+    CIS Benchmarks
+    STIG
+    MITRE NVD
+    NIST CVE
+    APRA234
+    ISO/IEC 27001
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Threat Modelling - identifies all points of attack that hackers could exploit and how they could do and it designs solutions to keep the system and its data safe.
+
+How Threat Model Works -
+    What are we building? (Diagramming)     - Asses data flows, boundaries, technology used for every hand-off
+    What can go wrong? (Threat enumeration) - Question every possible means of exploiting the hand-offs.
+    What are we going to do about that? (Mitigation) - Design defenses against each exploit
+    Did we do a good job?  (Verification)   - reflect back on the process, review it, and remind us that the work is never really done.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Threat Model - STRIDE (1990)
+    Spoofing    - a user or program pretends to be another
+    Tampering   - attackers modify components or code
+    Repudiation - threat events are not logged or monitored
+    Information disclosure  - data is leaked or exposed
+    Denial of service (DoS) - Services or components are overloaded with traffic to prevent legitimate use
+    Elevation of Privilege  - attackers grant themselves additional privileges to gain greater control over a system
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Threat Models -
+    STRIDE  - Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege
+    PASTA   - The Process for Attack Simulation and Threat Analysis
+    LINDDUN - Likability, Identifiability, Non-repudiation, Detectability, Disclosure of information, Unawareness, Noncompliance
+    OCTAVE  - Operationally Critical Threat, Asset, and Vulnerability Evaluation
+    VAST    - Visual, Agile, and Simple Threat Modeling
+    hTMM    - Hybrid Threat Modeling Method
+    qTMM    - Quantitative Threat Modeling Method
+    TRIKE   - Abbreviation is unknown, unified conceptual framework for security auditing automated concept from a risk management perspective
+    Trees   - Attack Trees
+    PnG     - Persona non Grata
+    DREAD   - Damage, Reproducibility, Exploitability, Affected users, Discoverability
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Threat Model Use -
+    STRIDE  - is specifically designed to focus on IT related threat
+    PASTA   - is a widely used & adaptable applicable model, with threat simulation, focusing on Risks Centric methodology.
+    LINDDUN - is focused more on Data and Privacy related model
+    OCTAVE  - is focused on Risk Management and organization related impact
+    VAST    - scales threat modeling process across infrastructure & is focused on attacker
+    TRIKE   - is focused on Risks Measurement on calculating its stakeholders components (assets, roles, actions, risk exposure)
+    hTMM    - A hybrid type threat model which is focused on Attacker/Defender models, melds features of: Security Cards, Persona non Grata, and STRIDE
+    qTMM    - A quantitative type threat model which is focused on Attacker/Defender models, melds features of Attack Trees, STRIDE, and CVSS
+    Trees   - is focused on Attacker’s scheme, works in any steady implemented production/business/process scheme, that is developed further to become the killchain nowadays
+    PnG     - has focused on attacks that represent archetypal personnels who behave in unwanted behaviors. Works perfectly to measure insider threat assessments
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Threat Model Tools -
+    OWASP Threat Dragon
+    Threagile
+
+----------------------------------------------------------------------------------------------------------------------------
+Regulation
+    GDPR - General Data Protection Regulation
+    HIPAA - Health Insurance Portability and Accountability Act
+    FISMA - Federal Information Security Management Act
+    PCIDSS - Payment Card Industry Data Security Standard
+    FERPA - Family Educational Rights and Privacy Act
+
+------------------------------------------------------------------------------------------------------------------
+Open Source Licenses
+
+    Apache License 2.0
+    BSD 3-Clause "New" or "Revised" license
+    BSD 2-Clause "Simplified" or "FreeBSD" license
+    GNU General Public License (GPL)
+    GNU Library or "Lesser" General Public License (LGPL)
+    MIT license
+    Mozilla Public License 2.0
+    Common Development and Distribution License
+    Eclipse Public License version 2.0

@@ -1,0 +1,174 @@
+Loops :
+#(Single argument)
+#if-else Loop
+
+def test(a):
+...     if a == 1:
+...             print('True')
+...     else:
+...             print('False')
+
+
+#Nested if-elif Loops
+def is_vowel(x):
+...     if x == 'a':
+...             print("True")
+...     elif x == 'e':
+...             print("True")
+...     elif x == 'i':
+...             print("True")
+...     elif x == 'o':
+...             print("True")
+...     elif x == 'u':
+...             print("True")
+...     else:
+...             print("False")
+...
+>>> is_vowel(a)
+
+#(Multiple argument)
+ def addten(a,b):
+...     return a + b == 10
+...
+>>> addten(5,5)
+
+#For Loop
+(Multiple argument)
+def print_upto(n,m):
+...     for x in range(n,m):
+...             print(x)
+...
+>>> print_upto(11,20)
+11
+12
+13
+14
+15
+16
+17
+18
+19
+
+#(Single argument)
+def printt(x):
+...     for x in range(1,x):
+...             print(x)
+...
+>>> printt(10)
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+#(superess new line with space)
+def printt(x):
+...     for x in range(0,x):
+...             print(x,end=' ')
+...
+>>> printt(10)
+0 1 2 3 4 5 6 7 8 9
+
+#(tab in table)
+def printt(x):
+...     for a in range(0,x):
+...             for b in range(0,x):
+...                     print(a * b, end='\t')
+...             print('')
+...
+>>> printt(10)
+0       0       0       0       0       0       0       0       0       0
+0       1       2       3       4       5       6       7       8       9
+0       2       4       6       8       10      12      14      16      18
+0       3       6       9       12      15      18      21      24      27
+0       4       8       12      16      20      24      28      32      36
+0       5       10      15      20      25      30      35      40      45
+0       6       12      18      24      30      36      42      48      54
+0       7       14      21      28      35      42      49      56      63
+0       8       16      24      32      40      48      56      64      72
+0       9       18      27      36      45      54      63      72      81
+
+#len and str in for loop to print
+def table(x):
+...     col = len(str(x * x)) + 1
+...     for i in range(1,x + 1):
+...             for j in range(1,x + 1):
+...                     print(i * j, end=' ' * (col - len(str(i * j))))
+...             print(' ')
+...
+0  0  0  0  0  0  0  0  0  0
+0  1  2  3  4  5  6  7  8  9
+0  2  4  6  8  10 12 14 16 18
+0  3  6  9  12 15 18 21 24 27
+0  4  8  12 16 20 24 28 32 36
+0  5  10 15 20 25 30 35 40 45
+0  6  12 18 24 30 36 42 48 54
+0  7  14 21 28 35 42 49 56 63
+0  8  16 24 32 40 48 56 64 72
+0  9  18 27 36 45 54 63 72 81
+
+#While loop
+
+>>> ent = ''
+>>> while ent != 'Please':
+...     print('Password')
+...     ent = input()
+...
+Password
+dd
+Password
+
+#with Local variable
+ def password_is():
+...     ent = ''
+...     while ent != 'test':
+...             print('Password')
+...             ent = input()
+...
+>>> password_is()
+
+#Global variable
+ent = ''
+ def password_is():
+...     global ent
+...     while ent != 'test':
+...             print('Password')
+...             ent = input()
+...
+>>> password_is()
+
+#Reverse the string
+ def rev(s):
+...     str = ''
+...     for i in s:
+...             str = i + str
+...     return str
+...     print(s)
+...
+>>> rev('test')
+'tset'
+
+#Reverse no
+ def rev(x):
+...     s = ''
+...     for x in range(0,x,2):
+...             s = str(x) + s
+...     print(int(s), end='\t')
+...
+>>> rev(10)
+86420
+
+#count space in word/char
+def space(s):
+...     count = 0
+...     for i in s:
+...             if i == ' ':
+...                     count += 1
+...     return count
+...
+>>> space('s s s')
+2

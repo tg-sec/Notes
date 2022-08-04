@@ -1,0 +1,81 @@
+#Set
+
+ a = set([1,2,3,3])
+>>> a
+{1, 2, 3}
+
+ a = set([1,2,3])
+ a = set('test')
+ a = {1,2,3}
+ a = {'test'}
+
+#add element in set
+ a.add(100)
+>>> a
+{100, 10, 'two', 'test'}
+
+#membership check
+ a
+{100, 10, 'two', 'test'}
+>>> 10 in a
+True
+>>> 'z' not in a
+True
+
+#remove element
+a
+{100, 10, 'two', 'test'}
+>>> a.remove(10)
+>>> a
+{100, 'two', 'test'}
+
+#manipulation of sets
+
+ a | b = combine both set without any modify
+ a & b = combine common item from both Set
+ a ^ b = combine odd item from both set
+ a - b = minus set a from set b
+ b - b = minus set b from set a
+
+ a
+{1, 2, 3, 4}
+>>> b
+{1, 2, 5, 6, 7, 8}
+>>> a | b
+{1, 2, 3, 4, 5, 6, 7, 8}
+>>> a & b
+{1, 2}
+>>> a ^ b
+{3, 4, 5, 6, 7, 8}
+>>> a - b
+{3, 4}
+>>> b - a
+{8, 5, 6, 7}
+
+#Swap using tuple
+ def swap():
+...     a = 1
+...     b = 2
+...     print('before swap a is ', a)
+...     print('before swap b is ', b)
+...     t =(a,b)
+...     b,a = t
+...     print('after swap a is ', a)
+...     print('after swap b is ', b)
+...
+>>> swap()
+before swap a is  1
+before swap b is  2
+after swap a is  2
+after swap b is  1
+
+#zip two list as key and value
+def unzip():
+...     c = dict()
+...     keys = [1,2,3,4,5]
+...     value = ['a','b','c','d']
+...     c = dict(zip(keys,value))
+...     print(c)
+...
+>>> unzip()
+{1: 'a', 2: 'b', 3: 'c', 4: 'd'}

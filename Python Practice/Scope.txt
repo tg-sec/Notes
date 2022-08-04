@@ -1,0 +1,29 @@
+#Scope
+Global Scope - When Program start execution the interpreter create one global scope and once program get executed it destroy that global scope.
+
+Local Scope - local scope are created when a function is call or started its execution.
+
+    A local scope cannot be access or called the outside of the function.
+    A global scope can be access or called in function
+
+'''
+eggf = "test"  # global Variable Scope
+def spam():
+    eggf = 1111  # local Variable Scope
+    print(eggf)
+spam()
+print(eggf)
+
+'''
+
+#defining local variable as global using global
+'''
+def spam():
+    global egg
+    egg = "local"
+
+
+egg = "global"
+spam()
+print(egg)
+'''

@@ -1,0 +1,20 @@
+Risk - A potential Problem
+Threat - its path to risk occurring
+Mitigation - countermeasure against the Threat
+
+Threat Modeling - process of identifying and enumerating the potential threats to a system.
+Container Threat Model -
+    External attackers - attempting to access a deployment from outside
+    Internal attackers - who have managed to access some part of the deployment
+    Malicious internal actors -  such as developers and administrators who have some level of privilege to access the deployment.
+    Inadvertent internal actors -  who may accidentally cause problems
+    Application processes - that, while not sentient beings intending to compromise your system, might have programmatic access to the system.
+
+------------------------------------------------------------------------------------
+Linux System Calls, Permissions, and Capabilities
+
+    Application run on user space but application want to do something has to ask kernal to do that and revert back to application.
+
+    System Calls - a call execute in kernal space.
+    Permission - everything is file in linux so to control access of files need a permissions. (rwe,seuid,setgid)
+    Capabilities - Capabilities can be assigned to a thread to determine whether that thread can perform certain actions. (CAP_NET_BIND_SERVICE), (setpcaps, getpcaps)

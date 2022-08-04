@@ -1,0 +1,24 @@
+#if else statement
+
+    NAME = "test"
+    PASSWORD = "test2"
+    if NAME == "test":
+        if PASSWORD == "test":
+            print("Access granted")
+        else:
+            print("wrong pass")
+    else:
+        print("wrong Name")
+
+#if elif statement
+
+    NAME = "test1"
+    AGE = 20
+    if NAME == "test":
+        print("its Test")
+    elif AGE < 12:
+        print("your are not test 12")
+    elif AGE < 100:
+        print("your are not test 100")
+    else:
+        print("all wrong")

@@ -1,0 +1,351 @@
+###None type
+
+# No result return
+# exceptions
+        Error type
+            return not printing 0   = for NoneType
+            IndexError              = for out of bound or range
+            KeyError                = for dict key is not found
+            NameError               = for variable not define
+            TypeError               = for value type is wrong eg. int([1])
+            ValueError              = for incorrect value input eg. int('test')
+            EOFError                = for end of file error
+            ZeroDivisionError       = for value is not division by 0
+            FileNotFoundError       = fot file not found
+#Raising exception
+#catching exception
+
+---------------------------------------------------------------------------------------
+>>> int([1])
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'list'
+
+>>> a
+{1: 'a', 2: 'b'}
+>>> a[3]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 3
+
+>>> 0 / 0
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ZeroDivisionError: division by zero
+
+>>> open('a.txt')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: 'a.txt'
+
+>>> int('fish')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 10: 'fish'
+
+>>> b[7]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+
+>>> z
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'z' is not defined
+
+ def f(a,b):
+...     a + b
+...
+>>> f(1,2) is None
+True
+>>> f(1,2) is not None
+False
+>>> f(1,2) == None
+True
+
+##Nonetype for exception
+ def  g(a):
+...     if a > 0:
+...             print(a)
+...     else:
+...             pass
+...
+>>> g(1)
+1
+>>> g(-1)
+>>> type(g(-1))
+<class 'NoneType'>
+>>> type(None)
+<class 'NoneType'>
+
+>>> a
+{1: 'a', 2: 'b', 3: 'c'}
+>>> a[0]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 0
+ a
+{1: 'a', 2: 'b', 3: 'c'}
+>>> a.get(0)
+>>> b = a.get(0)
+>>> type(b)
+<class 'NoneType'>
+
+##list issue
+  def found(a,b):
+...     c = []
+...     for i in a:
+...             print(i)
+...             v = b.get(i)
+...             c.append(v)
+...     return c
+...
+>>> found(a,b)
+1
+2
+3
+4
+5
+['a', 'b', 'c', None, None]
+
+ a
+[1, 2, 3, 4, 5]
+>>> b
+{1: 'a', 2: 'b', 3: 'c'}
+>>> def found(a,b):
+...     c = []
+...     for i in a:
+...             v = b.get(i)
+...             if v != None:
+...                     c.append(v)
+...     return c
+...
+>>> found(a,b)
+['a', 'b', 'c']
+
+##exception
+def look(a,b):
+...     try:
+...             return a[b]
+...     except IndexError:
+...             print(f'not found value of {b}')
+...
+>>> look(a,10)
+not found value of 10
+
+ d
+{1: 'a', 2: 'b', 3: 'c'}
+>>> def look(d,k):
+...     try:
+...             return d[k]
+...     except KeyError:
+...             print(f'not found value of {k}')
+...
+>>> look(d,2)
+'b'
+>>> look(d,4)
+not found value of 4
+>>> look({1:'dd',2:'cc'},0)
+not found value of 0
+
+## list and dict KeyError
+list = IndexError
+dict = KeyError
+
+ def look(d,k):
+...     try:
+...             return d[k]
+...     except KeyError:
+...             print(f'name is wrong{k}')
+...     except IndexError:
+...             print(f'out of index')
+...
+>>> a
+{1: 'a', 2: 'b'}
+>>> b
+[11, 12, 13, 14, 15]
+>>> look(a,2)
+'b'
+>>> look(a,3)
+name is wrong3
+>>> look(b,1)
+12
+>>> look(b,6)
+out of index
+>>> look(a,6)
+name is wrong6
+
+##Raising exception
+>>> def rep(e,length):
+...     if length < 0:
+...             raise TypeError
+...     l = []
+...     for x in range(0,length):
+...             l.append(e)
+...     return l
+...
+>>> rep(1,1)
+[1]
+>>> rep(1,-1)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 3, in rep
+TypeError
+
+>>> def look(d,k):
+...     try:
+...             return d[k]
+...     except KeyError as e:
+...             print(f'Fatal Error bad key {k} in dict {d}')
+...
+...
+>>> look(d,2)
+'b'
+>>> def look(d,k):
+...     try:
+...             return d[k]
+...     except KeyError as e:
+...             print(f'Fatal Error bad key {k} in dict {d}')
+...             raise e
+...
+>>> look(d,10)
+Fatal Error bad key 10 in dict {1: 'a', 2: 'b', 3: 'c'}
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 6, in look
+  File "<stdin>", line 3, in look
+KeyError: 10
+>>> def look(d,k):
+...     try:
+...             return d[k]
+...     except KeyError as e:
+...             print(f'Fatal Error bad key {k} in dict {d}')
+...
+...
+>>> look(d,10)
+Fatal Error bad key 10 in dict {1: 'a', 2: 'b', 3: 'c'}
+
+##catching exception
+>>> def look(d,k):
+...     try:
+...             return d[k]
+...     except Exception as e:
+...             print(f'Unknown error in look')
+...             raise e
+...
+>>> look(d,4)
+Unknown error in look
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 6, in look
+  File "<stdin>", line 3, in look
+KeyError: 4
+>>> def look(d,k):
+...     try:
+...             return d[k]
+...     except Exception as e:
+...             print(f'Unknown error in look')
+...
+...
+>>> look(d,4)
+Unknown error in look
+
+## keeping exception small
+>>> def look(d,k):
+...     try:
+...             res = d[k]
+...     except Exception as e:
+...             print('Unkonwn')
+...             raise e
+...     else:
+...             print('key succeeded')
+...             return res
+...
+>>> look(d,3)
+key succeeded
+'c'
+>>> look(d,4)
+Unkonwn
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 6, in look
+  File "<stdin>", line 3, in look
+KeyError: 4
+
+#
+>>> import random
+>>> def get_guess(msg):
+...     try:
+...             this_guess = int(input(msg))
+...     except ValueError:
+...             print('not number')
+...             return get_guess('')
+...     else:
+...             if this_guess < 1 or this_guess > 100:
+...                     print('no no in range 1..100')
+...                     return get_guess('')
+...             return this_guess
+
+>>> def guessing_games():
+...     target = random.randint(1,100)
+...     guess = get_guess('guess no btw 1...100')
+...     tries = 1
+...     while guess != target:
+...             tries += 1
+...             if guess < target:
+...                     guess = get_guess('Higher')
+...             elif guess > target:
+...                     guess = get_guess('lower')
+...     print(f'correct you took {tries} guesses.')
+
+#exception for function
+'''
+def name(a):
+    try:
+        b = 41 / a
+        print(b)
+    except ZeroDivisionError:
+        print(f"Cant divide by {a}")
+name(10)
+name(0)
+name(2)
+name(1)
+'''
+
+#exception for parameter
+'''
+def name(a):
+    b = 41 / a
+    print(b)
+try:
+    name(10)
+    name(0)
+    name(2)
+    name(1)
+except ZeroDivisionError:
+    print(f"cant divide by")
+
+'''
+#
+'''
+import time
+import sys
+INDENT = 0
+INDENTINC = True
+try:
+    while True:
+        print(' ' * INDENT, end='')
+        print("----")
+        time.sleep(0.01)
+        if INDENTINC:
+            INDENT = INDENT + 1
+            if INDENT == 2:
+                INDENTINC = False
+        else:
+            INDENT = INDENT - 1
+            if INDENT == 0:
+                INDENTINC = True
+except KeyboardInterrupt:
+    sys.exit()
+
+'''

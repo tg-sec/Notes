@@ -1,0 +1,137 @@
+
+--------------------------------------------------
+Git project Three state
+    working Dir (modified) -> staging Area (staged) -> .git repo (committed)
+
+Git Record the changes with this process
+    untracked (only for new file) -> unmodified (not modified but tracked ) -> modified (modified but tracked) - staged (ready to commit)
+
+Git configuration
+    Global - this config store in $USER directory used for all repo. (for all repo)
+    Local - this config is used for local repo limited to that specific git repo. (Only single repo)
+
+---------------------------------------------------------
+Git Commands
+    git prune - Prune all unreachable objects from the object database
+    git clone - download remote repo on local system
+    git init - initial the git project
+    git add file1.txt - add file from unstaged to stage area
+    git commit -m 'Initial project version' - commit the recent chages in repo
+    git commit -a -m 'Add new benchmarks' - untracked file will direct sent to staged area
+    git clone https://github.com/libgit2/libgit2 - clone a remote repo to local system
+    git commit --amend - you want to redo that commit, make the additional changes you forgot, stage them, and commit again
+    git status -  check current status of repo
+    git status -s - show the status of git in short form (M-1 modifiaction, MM-2 modification ,A-file ready to commit, ??- New file)
+    .gitignore - pushing a repo to remote git will skip files mentioned in this file
+    git diff - see changes but not yet staged
+    git diff --staged or --cached - compares staged changes to last commit
+    git rm - safely remove file from repo
+    git rm --cached README - you forgot to add something to your .gitignore file and accidentally staged it
+    git mv file_from file_to - move or rename a file
+    git log - show all commit history of repo
+    git log --stat or git log --stat -p -2 - show the history of repo commit in readble format
+    git revert - Git gives you the option of making a new commit which undoes all the changes from an existing one
+    git checkout -- <file> - replaced that file with the last staged or committed version (checkout moves HEAD itself)
+    git checkout master - <develop> does not move,HEAD itself does. HEAD will now point to master.(checkout moves HEAD itself)
+    git reset master - <develop> itself will now point to the same commit that master does (reset will move the branch HEAD points)
+    git reset HEAD <file> or git restore - unstaged file from staging area
+    git reset 9e5e6a4 - reset the HEAD to previous commit (Staged)
+    git reset --mixed - reset the index with HEAD to previous commit (unstaged)
+    git reset --hard - reset the index,HEAD and working dir to previous commit
+    git remote or git remote -v - check the origin of the repo
+    git remote add aa https://github.com/libgit2/libgit2 - adding remote repo shortname
+    git fetch aa - fetch repo with shortname
+    git fetch aa - pulls down all the data from that (current)remote project that you don’t have yet
+    git pull - automatically fetch and then merge that remote branch into your current branch
+    git push <remote> <branch> - want to share, you have to push it upstream
+    git push origin <local_branch_name>:<remote_branch_name> - push local branch with different name on remote
+    git remote show gg - show the remote information of repo
+    git remote rename gg FIrst -  rename the remote short name
+    git tag -a v1.4 -m "my version 1.4" - to maintain repo version
+    git tag -d v1.4 - delete tag
+    git describe master - Git generates a string consisting of the name of the most recent tag earlier than that commit, followed by the number of commits since that tag
+    git merge --squash <topic_branch> - takes all the work on the merged branch and squashes it into one changeset producing the repository state as if a real merge happened, without actually making a merge commit.
+    git format-patch -M origin/master - email the git to next user
+---------------------------------
+merge - it merge other branch into master with all it commit history
+fetch - get updated data from remote branch
+pull - fetch the data and merge into the branch
+rebase - it merge other branch into master but rebase rewrite the history of commit of branch and create new commit on master branch once it rebase. (rebasing makes for a cleaner history)
+filter-branch -
+
+--------------------------------
+tag type
+lightweight - tag with commit
+annotated (v1.4 -m "my version 1.4" ) - it contain add detail like id,GPG,msg,date,name
+
+----------------------------------
+git branch testing - create new branch testing from master
+git checkout testing - switch between branches
+git checkout -b serverfix origin/serverfix - create new branch with the local branch name and with the remote origin
+git branch -d hotfix - delete the branch
+git branch --all - see all local and remote branches
+git branch --merged - see the which branches are merged
+git branch --no-merged - see the which branches are not merged
+git branch --move - change the branch name only locally
+git push --set-upstream origin changed_name - change the name of remote branch
+git push origin --delete bad-branch-name - delete remote branch
+
+---------------------------------
+Branching and merging flow
+
+checkout to master (git checkout master) -> create issues or hotfix or testing branch (git branch testing ) -> complete the changes in testing branch (git commit -m "hotfix,issue,testing") -> checkout to master branch (git checkout master) -> merge changes to master branch (git merge testing)
+
+solve merge conflicts
+checkout to master (git check master) -> merge the test branch in master (git merge testing) -> conflict occurred in same file code git diff file1.txt) -> resolve conflict with changes (add/remove code being conflicting) -> add resolved file in staged area (git add file1.txt) -> commit the repo (git commit -m "conflict resolved")
+
+rebasing the branch
+created server branch from master (git branch server)-> committed some changes in server (git commit -m "on server branch") -> the you created client branch from server and added some commits in it (git branch client,git commit -m "commit on client branch" ) -> the suppose you decided to merge client side commit in master first (git rebase --onto master server client,git checkout master,git merge client ) -> then you rebase and merge server branch in master (git rebase master server,git checkout master,git merge server) -> delete the server and client branch(git branch -d client,git branch -d server)
+
+"Do not rebase commits that exist outside your repository and that people may have based work on. (remote Repos)"
+
+------------------------------------------------------------------------------------------------------------------
+Branch workflow
+
+Long running branches - long lived like master, develop, topic or release,feature
+Topic branches - short lived like issues,hotfix
+
+------------------------------------------------------------------------------------------------------------------------------
+bare repository - a repository that doesn’t contain a working directory.By convention, bare repository directory names end with
+the suffix .git
+
+-------------------------------------------------------------------------------------------
+DVCS - distributed version control system
+CVCS - Central version control system
+
+---------------------------------------------------------------------------------------------------------------------------
+git workflow
+1. The project maintainer pushes to their public repository.
+2. A contributor clones that repository and makes changes.
+3. The contributor pushes to their own public copy.
+4. The contributor sends the maintainer an email asking them to pull changes.
+5. The maintainer adds the contributor’s repository as a remote and merges locally.
+6. The maintainer pushes merged changes to the main repository.
+
+------------------------------------------------------------------------------------------------
+git apply /tmp/patch-ruby-client.patch - apply the patch shared by some one (“apply all or abort all” model where either everything
+is applied or nothing is,)
+git cherry-pick e43a6 - you can only rebase those commit you want (A cherry-pick in Git is like a rebase for a single commit)
+git archive master --prefix='project/' | gzip > `git describe master`.tar.gz -  for releasing the build of the project.
+git stash - your modified tracked files and staged changes — and saves it on a stack of unfinished changes that you can reapply at any time
+git stash save
+git stash apply - reapply stash to repo
+git stash drop - delete the stashed data
+git stash pop - apply the stash and delete it automatically
+git stash branch test - create branch from the stash
+git clean - cleaning your working directory
+git grep -  search through the all commits
+git rebase --continue - go through the series of commits and interact 1 commit at a time and continue next
+git rebase -i - start rebase in interactive mode
+git rebase --abort - drop all changes till done and go back to state before start
+git rerere - The name stands for “reuse recorded resolution” and, as the name implies, it allows you to ask Git to remember how you’ve resolved a hunk conflict so that the next time it sees the same conflict, Git can resolve it for you automatically.(you have to enable it through config)
+git bisect - does a binary search through your commit history to help you identify as quickly as possible which commit introduced an issue.
+git bisect start - start bisect
+git bisect bad -  last bad commit goes wrong (current commit you’re on is broken)
+git bisect good v1.0 - last good commit which is working fine (when the last known good state was)
+git bisect reset - When you’re finished, you should run
+git replace - override the commit of the repo that want to be rearrange

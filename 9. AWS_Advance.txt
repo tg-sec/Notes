@@ -1,0 +1,440 @@
+Shared Responsibility
+
+    Customer (Security in cloud) - Data and above handle by Customer
+    AWS (Security of the cloud) - Hardware and infrastructure handle by the AWS (AZ as well)
+
+Managed Services - Amazon RDS, Amazon DynamoDB, Amazon S3, OS patching
+Data Security - in motion and at rest (encrypt and audit the API Logs)
+
+--------------------------------------------------------------------------------------
+Shorts Forms
+
+ARN - Amazon Resource Number
+REST API - representational state transfer
+SOAP - Simple object access protocol
+SAML 2.0 - Security Assertion Markup Language
+OIDC - Open ID Connect
+OAuth - Authorization Framework for APIs
+
+---------------------------------------------------------------
+JWT - JSON Web Token can call ID Token.
+
+    JWT - Its a token for OAuth with OIDC Framework
+        Three required parameter of JWT -
+            HEADER - ALGORITHM & TOKEN TYPE
+            PAYLOAD - UserID, ID, Name
+            VERIFY SIGNATURE - HMACSHA256
+
+Access Token -
+    credentials used to access protected resources.access token is put in the Authorization header of your request, usually looks like Bearer “access_token” that the API you are calling can verify and grant you access.
+
+bearer Token -
+    A bearer token means who holds the access token can access authorized resources without further identification.
+    access token uses as bearer token
+
+Flow of the Token -
+    JWT (Request to web server) -> Access Token (Response from Server ) -> bearer Token (can access Authorized Resource)
+
+https://www.c-sharpcorner.com/article/accesstoken-vs-id-token-vs-refresh-token-what-whywhen/
+
+------------------------------------------------------------------------------------------------
+REST API (its not a protocol) - Uses JWT
+
+    REST is a set of guidelines that offers flexible implementation.
+    contract between an information provider (Respond) and an information user (The Call)
+
+    For example, the API design for a weather service could specify that the user supply a zip code and that the producer reply with a 2-part answer, the first being the high temperature, and the second being the low. follows A client-server architecture.
+https://www.redhat.com/en/topics/api/what-is-a-rest-api
+
+SOAP (Its a protocol) - uses SAML
+    designed for applications built with different languages and on different platforms could communicate.maintain By WWW.
+    can be compliance with ACID (atomicity, consistency, isolation, and durability) property.
+
+    eg.
+        <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+            <env:Header>
+                <n:alertcontrol xmlns:n="http://example.org/alertcontrol">
+                <n:priority>1</n:priority>
+                <n:expires>2001-06-22T14:00:00-05:00</n:expires>
+                </n:alertcontrol>
+            </env:Header>
+            <env:Body>
+                <m:alert xmlns:m="http://example.org/alert">
+                <m:msg>Pick up Mary at school at 2pm</m:msg>
+                </m:alert>
+            </env:Body>
+        </env:Envelope>
+
+    SOAP is a protocol with specific requirements like XML messaging.
+https://www.redhat.com/en/topics/integration/whats-the-difference-between-soap-rest
+https://auth0.com/learn/rest-vs-soap/
+
+------------------------------------------------------------------------------------------------------------
+SAML (Its a Protocol) - Old
+    use for authentication and authorization.it transfer data between identity provider (IdP) and the service provider (SP).
+    Based on XML. Uses SOAP or HTTP requests for transports.Federated identity.
+
+OAuth (Its a Protocol) - New
+    use for authorization.Work on Access token.
+    https://auth0.com/intro-to-iam/what-is-oauth-2/
+
+OIDC (Its a Protocol) - New - identity Provider
+        Use for authentication.it transfer data between identity provider (IdP) and the service provider (SP).
+        build on OAuth Framework. Uses HTTPS requests for transport. used in OAuth authorization.Federated identity
+        Uses JWT
+
+https://www.onelogin.com/learn/oidc-vs-saml
+
+-------------------------------------------------------------------------------------------------------------------
+AWS Security Services
+
+Identity and Access Management (IAM) -
+    control and manage access to the AWS Services and Resources
+
+Virtual Private Cloud (VPC) -
+    Isolate the all resource of the Cloud in private Space (SDN,NACL)
+
+VPC Logs -
+    its feature to log all traffic of VPC and can be share to AWS CloudWatch,AWS S3
+
+Amazon CloudWatch -
+    AWS Primary services to log and monitor resource with form of log,event,matrices.
+
+AWS CloudTrail -
+    Governance and compliance done by this. Action Taken by roles,Users and services are recorded by this service.
+
+AWS Config -
+    regional service that helps us to continuously keep track of the configuration changes made to the AWS resources.every six hr configuration history file (in JSON format) send to the configured S3 bucket.
+
+AWS Inspector -
+    automated security assessment service.based on the pre-defined templates and produce a detailed list of security findings that are prioritized by severity. (Pre-defined Assessment can be CVE,CWE,CIS Benchmarks,Security Best Practices)
+
+    Type Of assessment -
+        Host Assessment - Inspector agent installed on Host to monitor. (EC2)
+        Network Assessment - Inspector agent install on network but its optional
+
+Amazon GuardDuty -
+    an intelligent (AI/ML) threat detection service that can continuously monitor for malicious activity and unauthorized behavior to protect the AWS accounts and workloads.
+
+    Monitors Three types of resources -
+        CloudTrail events
+        VPC Flow Logs
+        Route53 DNS Logs
+
+AWS Shield -
+    protection against the OSI layers 3 (Network) & 4 (Transport) and Distributed Denial of Service (DDoS) attacks.
+
+AWS WAF -
+    protect the web applications and/or APIs. (eg. SQL Injunction,XSS,CSRF). Work in OSI Layer 7 (Application).
+
+    Deployed on the following AWS service -
+        Amazon CloudFront
+        Application Load Balancer
+        Amazon API Gateway (to protect RESTful APIs)
+        Amazon Appsync (to protect GraphQl API)
+
+Amazon Macie (DLP) -
+    fully managed, Machine Learning powered, sensitive data discovery and classification service that helps to implement the Data Loss Prevention (DLP) solutions.evaluate the S3 environment with bucket and the access control.to discover Sensitive information like PII.
+
+AWS Security Hub -
+    regional service that provides a comprehensive and aggregated view of the high-priority security alerts and compliance status across multiple AWS accounts
+
+    Support Following Services -
+        Amazon GuardDuty
+        Amazon Macie
+        Amazon Inspector
+        AWS Systems Manager
+        AWS Firewall Manager
+        AWS IAM Access Analyzer
+
+AWS Key Management Service (KMS) -
+     fully managed service that helps to create and manage the cryptographic keys.Uses hardware security modules (HSM) to protect the keys. (Used in S3 as SSE-KMS).
+
+AWS Secrets Manager -
+    Fully managed service that can securely store and manage the lifecycle of the secrets like database credentials, API-keys, security tokens.help the application developers to eliminate the need to hardcode sensitive information in the code or configuration files.
+
+AWS Systems Manager -
+    gives better visibility and control over our infrastructure on AWS.alternative to AWS Secrets Manager.
+
+        Parameter store - store credentials (Secrets), non-confidential data in one location
+        Session Manager - handle the services with SSM install agent like EC2 instance uses 22 port
+        Patch Manager - automate process of install and update patch release by the vendor.
+
+AWS Artifacts -
+    central resource for compliance-related information on AWS. It gives on-demand access to AWS security and compliance audit reports. (PCI-DSS,NIST etc)
+
+AWS Trusted Advisor -
+    real-time guidance and helps us in provisioning the AWS resources following the AWS best practices.it Analyze the AWS environment and provides recommendations.
+
+    Use for Below services -
+        Security
+        Cost optimization
+        Performance
+        Fault tolerance
+        Service limits
+
+AWS Well-Architected Framework
+AWS Well-Architected tool
+
+----------------------------------------------------------------------------------------------------------------------
+AWS CLI Reference
+
+aws configure --profile s3admin - configure multiple profiles.Default is default one.
+
+----------------------------------------------------------------------------------------------------------------------
+IAM - governs 'WHO' can perform 'WHAT' actions on 'WHICH' resources.AWS Security Token Service (STS) for that role session.
+
+    Roles -  short-term credentials are provided leveraging the AWS Security Token Service (STS) for that role session.
+    Identity - WHO
+    Access - WHAT
+    Role Based Access Control (RBAC) - Roles use to handle resource access
+    Attribute Based Access Control (ABAC) - Tags with roles used to handle the resource access
+    Access Control List - legacy ACL specially used for S3 buckets and objects
+
+Policy Creation Elements -
+    Effect - allow or deny
+    Action - granting or denying access to which resource
+    Resource - which resource
+    Condition (optional) - on what Condition allow to access
+
+Sample Policy Format -
+
+    {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "EC2Describe",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeImages",
+                "ec2:DescribeInstances"
+                ],
+            "Resource": "*",
+            "Condition": "*"
+            }
+        ]
+    }
+
+OpenID vs OAuth 2.0
+    OpenID vs. OAuth. Simply put, OpenID is used for authentication while OAuth is used for authorization. OpenID was created for federated authentication, meaning that it lets a third-party application authenticate users for you using accounts that you already
+
+To access AWS Resource Below details need to pass:
+    RoleARN - IAM role that the application wishes to assume
+    RoleSessionName - temporary credentials received in the response
+    WebIdentityToken - OAuth2.0 access token or OIDC Id token
+    ProviderId - identity provider's domain name like www.amazon.com
+
+-----------------------------------------------------------------------------------------------------
+AWS Single Sign On (SSO) - to maintain centralized access to multiple accounts. which also support SAML 2.0 (Third party identifier)
+AWS S3 canned ACL - a set of predefined grants
+        private - only Owner get FULL_CONTROL (both bucket and object)
+        public-read -  Owner get FULL_CONTROL and All_USER will get read access (both bucket and object)
+        authenticated-read - Owner get FULL_CONTROL and AUTHENTICATED_USER  will get read access (both bucket and object)
+        bucket-owner-read - Owner get FULL_CONTROL.owner get Read access.(only object)
+        bucket-owner-full-control -object owner and bucket owner get FULL_CONTROL
+
+-----------------------------------------------------------------------------------------------------
+## infrastructure Security
+
+AWS infrastructure
+    Region - Geographical area
+    Availability Zone - discrete Data Center
+    edge Network - physical network between data center to data centers
+
+Securing Network with VPC -
+    VPC
+    Subnets
+    Route Table
+    Internet Gateway
+    Nat Device
+--------------------------------------------------------
+VPN - Support for AES128 or AES256 encryption
+
+    AWS Site-to-Site VPN - VPC to remote network through IPSec.
+        Virtual Private Gateway -
+        customer gateway - Customer Device
+    AWS Client VPN - client-to-site VPN using OpenVPN based strategy
+
+--------------------------------------------------------
+AWS Direct Connect - create a dedicated private connection over the standard Ethernet fiber-optic cable, between the remote networks and AWS.
+
+InterVPC Communication
+    VPC Peering - VPC to VPC connection with small mesh Networks
+    Transit Gateway - regional Network transit Hub can interconnect VPC and on-premises network.
+
+VPC Endpoint Service - Privately connect AWS resource without exposing VPC publicly.
+    Gateway type endpoints - Available only For S3 and AWS DynamoDB
+    Interface type endpoints - an elastic network interface (ENI) with a private IP address.
+
+
+-------------------------------------------------------------
+Firewalls
+
+Stateful - if inbound rule 22 is allowed it not necessary to configure outbound rule 22 call stateful
+Stateless - if inbound rule 22 is allowed it mandatory necessary to configure outbound rule 22 call stateless
+
+    Security Group - its a virtual Firewall used for EC2 and ELB. control the inbound and outbound traffic.SG are Stateful.
+
+    Network Access Control List (NACL) - Associate with Subnets.NACl are Stateless.
+
+    AWS Network Firewall - can filter the traffic at the VPC perimeter
+        create Rule -> create Firewall policy - create firewall
+
+    DNS Firewall - enables us to define the rule groups with the domain name filtering rules.We can create both blocklists and
+    allowlists for the domains with DNS Firewall.
+        Create Domain list -> create Rule Group -> combine both
+
+-----------------------------------------------------------
+Traffic mirroring - Traffic mirroring can thus help with the root cause analysis of a network performance issue, reverse engineering sophisticated network attacks, packet inspection, threat monitoring.Using mirroring filter
+
+---------------------------------------------------------------------------------------
+Patch Management - use AWS System Manager it has Session, Patch Management
+SSH and RDP session - Use AWS System Manager with SSM agent. dont need to maintain bastion host
+
+------------------------------------------------------------------------------
+IP Filtering - Filtering or blocking the IP addresses is a commonly used technique to reject the traffic from the IP addresses.
+    AWS WAF Rules
+    Blacklisting with resource policy - IAM resource-based policies could be used to blacklist the IP ranges for the services
+    Blacklisting with NACL -  IP addresses can be blacklisted at the subnet level using NACL
+    Whitelisting with security groups - when we know the specific set of IP addresses allowed access to the instance or network interface safeguarded by the security group
+
+---------------------------------------------------------------------------------
+Vulnerability assessment - used for Amazon EC2 instances and Amazon Elastic Container Registry (ECR)
+    Amazon Inspector - used for Amazon EC2 instances VA.Host and Network Assessment
+    ECR image scans - Elastic Container Registry Image scanning
+
+-------------------------------------------------------------------------------------------------------------------
+## Data Security
+    Cryptography - art and science of keeping messages or data secure
+    cipher or crypt alogrithem   - mathematical function used for encryption and decryption
+    Encryption - Paintext to Ciphertext conversion
+    Decryption - Ciphertext to Plaintext conversion
+    Encode - process of conversion of data from one format to another.
+    Decode - reverse of the Encode
+    Hash - technique to ensure the integrity of the data by converting it into a fixed-length string.
+    Cipher suite - SSL/TLS
+
+----------------------------------------------------
+SYMMETRIC AND ASYMMETRIC ALGORITHMS -
+    Symmetric Algorithms -   ones where the encryption and decryption keys are the same.
+                             AES and DES Symmetric algorithm
+    Asymmetric Algorithms -  use different encryption and decryption keys.
+                             RSA,ECDSA and DSA (Digital Signatures Algorithm) Asymmetric algorithm
+
+----------------------------------------------------
+DIGITAL SIGNATURE AND MESSAGE SECURITY -
+    Authentication - receiver should be able to authenticate the source or origin of the message
+    Integrity - verify that the message has not been altered or updated during transit.
+    Non-repudiation - sender should not be able to deny being the sender of the message falsely.
+
+-----------------------------------------------------
+Security of data in motion and at rest
+    In motion - cipher suites and secure protocols (HTTPS, SSL/TLS, SFTP) are nowadays commonly used for securing the data in motion.
+    At rest -  encrypt the data itself prior to storing them and/or encrypt the storage device
+
+-----------------------------------------------------
+AWS Key Management Service (KMS) - cryptographic key management service which is integrated with several other AWS services like Amazon EBS, Amazon S3, Amazon RDS, Amazon DynamoDB.Uses HSM(Hardware Module Security) to store the keys
+
+    Customer Master Key (CMK) -
+        AWS Owned CMKs - managed by AWS for multiple AWS accounts
+        AWS Managed CMKs - created, managed, and used on behalf of the customer, by an AWS service
+        Customer Managed CMKs -  fully controlled by the customer, and as such, these are created, owned, and managed by them.
+
+------------------------------------------------------
+S3 - Simple Storage Service
+    Server-Side Encryption - Data at rest Encryption.decrypted after the download of the object
+        SSE-S3
+        SSE-KMS
+        SSE-C (Customer)
+
+    Client-Side Encryption - Data in transit Encryption.encrypt the data before sending to S3
+
+------------------------------------------------------
+EBS - Elastic Block Store
+    uses KMS-CMK to encrypt attached store,volume,snapshots.
+
+-------------------------------------------------------
+Amazon DynamoDB - serverless NoSQL database similar to the S3
+    Server-Side Encryption - at rest encryption
+        AWS Managed CMK
+        Customer Managed CMK
+
+    Client-Side Encryption - in transit encryption
+
+-------------------------------------------------------
+Amazon RDS
+
+     Server-Side Encryption - at rest encryption
+        at rest - AES-256
+        AWS Managed CMK
+        Customer Managed CMK
+
+    Client-Side Encryption - in transit encryption
+         in motion - SSL/TLS
+
+-------------------------------------------------------
+## Application Security
+
+Amazon API Gateway is a highly available, managed service which can help in creating, publishing, maintaining, securing, and monitoring the APIs deployed on AWS cloud at scale.
+
+    Uses signed bearer token or access token to authorization the User.
+
+    API Authorization -
+        IAM Authorizer - IAM policy can be use to control the access of Amazon API Gateway. Uses AWS Security Token Service or STS
+
+        Lambda Authorizer - could be used to implement OAuth or SAML Authorization strategy
+            Token Authorizer - identity pass as token in request header (like bearer token Authorization header )
+            Request Authorizer - authorize the request on request header,query string
+
+        Cognito Authorizer - serverless offering that can act as an identity provider (IdP) as well as an identity broker.it provide out-of-box integration with Amazon API Gateway and other IDP.
+
+        JWT Authorizer - create JWT based access tokens for HTTP  API. These JWT tokens could be verified and validated by JWT Authorizer.
+
+---------------------------------------------------------
+Controlling Cross-Origin Resource Sharing -
+    CORS - Cross origin refers to situations where the request is made to a different domain/subdomain/protocol/port.
+        Access-Control-Allow-Origin
+        Access-Control-Allow-Headers
+
+---------------------------------------------------------
+Protecting API with WAF
+Private API - API not expose to internet is Private API
+Securing web applications hosted on S3 and CloudFront -
+
+---------------------------------------------------
+AuthN/AuthZ with Amazon Cognito - Amazon Cognito can greatly help in setting up the authentication, authorization, and user management needs of an application
+
+    Primary Component -
+        User pool - User pool acts as a user directory and provides a total sign-up/sign-in solution for the mobile and web application users.
+
+        Identity pool - Identity pool helps the users to access the AWS resources (like S3, DynamoDB, etc.) by obtaining the temporary AWS credentials. Identity pools also support the anonymous or guest users.
+
+    AuthN - Authentication - Define Who access
+    AuthZ - Authorization - Which and What Access
+
+--------------------------------------------------------------
+## Logging, Monitoring, and Auditing
+
+AWS CloudWatch - Primary Logging and Monitoring service
+
+    Log Stream - sequence of event of different services
+    Log Group - A group of log stream that share same monitoring, Access control
+
+Services Publish Logs to CloudWatch -
+                Amazon API Gateway, AWS CloudTrail, Amazon ECS, Amazon EKS, AWS Lambda, Amazon Route53, Amazon SNS, Amazon VPC
+
+------------------------------------------------------------------------
+AWS config - greatly help in compliance audits, security analysis, and troubleshooting configuration changes.
+
+AWS resource types are supported - Amazon CloudFront, Amazon API Gateway, Amazon EBS, Amazon EC2, Amazon ECS, Amazon EKS, Amazon ECR, Amazon RDS, Amazon S3, Amazon VPC
+
+----------------------------------------------------------------------
+AWS Artifact - central repository for all the AWS security and compliance reports, or in short, audit artifacts.
+
+-------------------------------------------------------------------------
+## Best Security Practice
+    Delete Root Account Access Keys. Create another user to Manager Services.
+    Create Strong Password Policy
+    enable 2-Factor Authentication for all user
+    Follow Least Privilege policy
+    Isolate the VPC Network only required services should allow to access to internet

@@ -1,0 +1,79 @@
+##tuple
+#unpacking tuple
+ b
+(2, 'b', 3)
+>>> x,y,z = b
+>>> x
+2
+>>> y
+'b'
+>>> z
+3
+
+a
+(1, (1, 2), 2)
+>>> x,y,z = a
+>>> x
+1
+>>> y
+(1, 2)
+>>> z
+2
+
+#tuple in function
+a
+(1, 2, (1, 2))
+>>> def tu(a):
+...     x,y,z = a
+...     b = x + y
+...     return b
+...
+>>> tu(a)
+3
+
+def f(a):
+...     x,y,z = a
+...     b = x + y
+...     return b
+>>> f((1,2,(1,2)))
+3
+
+#indexing a tuple and select item form item
+ a
+(1, 2, (1, 2))
+>>> a[1]
+2
+>>> a[0]
+1
+>>> a[2]
+(1, 2)
+
+#Slicing a tuple
+ a
+(1, 2, (1, 2))
+>>> a[1]
+2
+>>> a[-1]
+(1, 2)
+
+#count length of tuple
+a
+(1, 2, 3, (1, 2))
+>>> len(a)
+4
+
+#tuple in tuple length
+a = (1, 2, 3, (1, 2),(1))
+>>> len(a[3])
+2
+
+#can change tuple if tuple contain list so list can get change
+l = [1,2,3]
+>>> b = (1,1)
+>>> l = [1,2,3]
+>>> b = (l,l)
+>>> b
+([1, 2, 3], [1, 2, 3])
+>>> l[2] = 5
+>>> b
+([1, 2, 5], [1, 2, 5])

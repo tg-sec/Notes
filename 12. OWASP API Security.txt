@@ -1,0 +1,120 @@
+1. Broken Object Level Authorization
+    implemented at the code level to validate that user can access objects that they should have access to.
+        - Failures in this mechanism typically leads to unauthorized information disclosure, modification, or destruction of all data.
+        - Attackers can exploit API endpoints that are vulnerable to broken object level authorization by manipulating the ID of an object that is sent within the request
+
+    Prevention -
+        - should implement object level authorization checks should validate that the logged-in user does have access to perform the requested action on the requested object.
+        - Prefer to use random and unpredictable values as GUIDs for records’ IDs.
+
+2. Broken User Authentication / Broken Authentication
+    Authentication endpoints and flows are assets that need to be protected. “Forgot password / reset password” should be treated the same way as authentication mechanisms.
+        - weak password
+        - Sends sensitive authentication details, such as auth tokens and passwords in the URL.
+        - Accepts unsigned/weakly signed JWT tokens
+        - Uses weak encryption keys.
+
+    Prevention -
+        - implement multi-factor authentication.
+        - Implement anti brute force mechanisms to mitigate credential stuffing
+        - API keys should not be used for user authentication
+
+3. Broken Function Level Authorization
+    improper authorization check implemented at function level.
+        - user can perform sensitive action by changing http method .(e.g., from GET to DELETE)?
+        - simply guessing the endpoint URL and parameters user can access restricted source.
+
+    Prevention -
+        - deny all access by default, specified access should be there.
+        - Review your API endpoints against function level authorization flaw.
+
+4. Lack of Resources & Rate Limiting
+    API requests consume resources such as network, CPU, memory, and storage. The amount of resources required to satisfy a request greatly depends on the user input and endpoint business logic.
+        - below limits should be implemented
+            Execution timeouts
+            Max allocable memory
+            Number of file descriptors
+            Number of processes
+            Request payload size (e.g., uploads)
+            Number of requests per client/resource
+            Number of records per page to return in a single request response
+
+    Prevention -
+        - implement the rate limit request from user
+        - Add proper server-side validation for query string and request body parameters
+        - Define and enforce minimum and maximum incoming para and payloads in request
+        - user docker
+
+5. Excessive Data Exposure
+    The API returns sensitive data to the client by design. This data is usually filtered on the client side before being presented to the user. An attacker can easily sniff the traffic and see the sensitive data.
+
+    Prevention -
+        - Never rely on the client side to filter sensitive data.
+        - Review the responses from the API to make sure they contain only legitimate data.
+        - Implement a schema-based response validation mechanism.
+
+6. Mass Assignment
+    Objects in modern applications might contain many properties. Some of these properties should be updated directly by the client (e.g., user.first_name or user.address) and some of them should not (e.g., user.is_vip flag).
+        - attacker could change the properties for above and gain access to data.
+
+    Prevention -
+        - Whitelist only the properties that should be updated by the client.
+        - blacklist properties that should not be accessed by clients.
+
+    Eg. Code -
+        PUT /api/v1/users/me with the following legitimate JSON object:
+            {"user_name":"inons","age":24}
+        The request GET /api/v1/users/me includes an additional credit_balance property:
+            {"user_name":"inons","age":24,"credit_balance":10}
+        The attacker replays the first request with the following payload:
+            {"user_name":"attacker","age":60,"credit_balance":99999}
+
+7. Improper Assets Management
+    Outdated documentation makes it more difficult to find and/or fix vulnerabilities. Lack of assets inventory and retire strategies leads to running unpatched systems, resulting in leakage of sensitive data.
+        - purpose of an API host is unclear
+        - There is no documentation, or the existing documentation is not updated.
+        - no retirement plan for each API version.
+        - Old or previous API versions are running unpatched.
+
+    Prevention -
+        - documentation of all aspect of API with authentication, errors, redirects, rate limiting, cross-origin resource sharing (CORS) policy and endpoints, including their parameters, requests, and responses.
+        - Generate documentation automatically by adopting open standards.
+        - Make API documentation available to those authorized to use the API.
+        - perform risk analysis to make the decision of the mitigation actions required for the older version.
+
+8. Security misconfiguration
+    Appropriate security hardening is missing across any part of the application stack or improperly configured permissions on cloud services.
+        - latest security patches are missing, or the systems are out of date.
+        - TLS is missing
+        - CORS is missing or improperly configured
+
+    Prevention -
+        - repeatable hardening process leading to fast and easy deployment of a properly locked down environment
+        - secure communication channel for all API interactions access to static assets (e.g., images).
+
+9. Injection
+    User-supplied data is not validated, filtered, or sanitized by the application to interpreter.Used of object-relational mapping (ORM) search parameters to extract additional, sensitive records.(first_name, last_name in sql).
+    Some of the more common injections are SQL, NoSQL, OS command, Object Relational Mapping (ORM), LDAP.
+        - Hostile Data with object-relational mapping (ORM) search parameters to extract additional, sensitive records.
+        - Hostile data is directly used or concatenated.
+
+    Prevention -
+        - Source code review is the best method of detecting if applications are vulnerable to injections
+        - use a safe API
+        - provides a parameterized interface
+        - Use positive server-side input validation
+        - For any residual dynamic queries, escape special characters using the specific escape syntax for that interpreter.
+
+10. Insufficient Logging & Monitoring
+    Without logging and monitoring, breaches cannot be detected.
+        - Auditable events, such as logins, failed logins, and high-value transactions, are not logged
+        - Logs should not stored locally.
+
+    Prevention -
+        - Ensure all login, access control, and server-side input validation failures can be logged with sufficient user context
+        - Ensure that logs are generated in a format that log management solutions can easily consume.
+        - teams should establish effective monitoring and alerting of suspicious activities are detected and responded to quickly.
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Credential stuffing - a cyber attack method in which attackers use lists of compromised user credentials to breach into a system.

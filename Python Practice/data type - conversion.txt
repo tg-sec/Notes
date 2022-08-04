@@ -1,0 +1,16 @@
+#tuple to list
+>>> a = ('a','b','c')
+>>> type(a)
+<class 'tuple'>
+>>> b = list(a)
+>>> b
+['a', 'b', 'c']
+
+#List to tuple
+>>> b
+['a', 'b', 'c']
+>>> c = tuple(b)
+>>> c
+('a', 'b', 'c')
+>>> type(c)
+<class 'tuple'>

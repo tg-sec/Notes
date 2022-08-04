@@ -1,0 +1,136 @@
+#Function
+
+--> all variable should declare in the function at start
+
+##function syntax
+    def <function_name>:
+        declaration
+        program logic
+
+## list only print last output
+>>> def p(a):
+...     b = []
+...     for i in a:
+...             b.append(i)
+...     print(b)
+...
+>>> p(a)
+[1, 2, 3, 4]
+
+##
+>>> def p(a):
+...     b = []
+...     for i in a:
+...             for j in a:
+...                     b.append(j)
+...             print(b)
+...             b.append(i)
+...     print(b)
+...
+>>> p(a)
+[1, 2, 3, 4]
+[1, 2, 3, 4, 1, 1, 2, 3, 4]
+[1, 2, 3, 4, 1, 1, 2, 3, 4, 2, 1, 2, 3, 4]
+[1, 2, 3, 4, 1, 1, 2, 3, 4, 2, 1, 2, 3, 4, 3, 1, 2, 3, 4]
+[1, 2, 3, 4, 1, 1, 2, 3, 4, 2, 1, 2, 3, 4, 3, 1, 2, 3, 4, 4]
+>>> def p(a):
+...     b = []
+...     for i in a:
+...             for j in a:
+...                     b.append(j)
+...             print(b)
+...
+>>> p(a)
+[1, 2, 3, 4]
+[1, 2, 3, 4, 1, 2, 3, 4]
+[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]
+[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]
+>>> def p(a):
+...     b = []
+...     for i in a:
+...             for j in a:
+...                     b.append(j)
+...     print(b)
+...
+>>> p(a)
+[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]
+
+>>> def p(a):
+...     b = []
+...     for i in a:
+...             for j in a:
+...                     print(i,j)
+...
+>>> p(a)
+1 1
+1 2
+1 3
+1 4
+2 1
+2 2
+2 3
+2 4
+3 1
+3 2
+3 3
+3 4
+4 1
+4 2
+4 3
+4 4
+
+#function can be call in to another function
+>>> a.hideturtle()
+>>> def a():
+...     print('function a')
+...
+>>> def b():
+...     print('function b')
+...
+>>> def c():
+...     a()
+...     b()
+...
+>>> c()
+function a
+function b
+
+#def with parameter
+'''
+def hello(name):
+    print("hello, " + name)
+hello("test")
+
+'''
+##term Define, Call, Pass, Argument, Parameter
+#Pass value
+'''
+import random
+def getAns(ansno):  # defining a function but not calling
+    if ansno == 1:
+        return "its certain1"
+    elif ansno == 2:
+        return "its certain2"
+    return "test"
+r = random.randint(1, 4)  # passing the argument in r veriable
+teat = getAns(r)  # calling function with r parameter
+# r is a parameter
+print(teat)
+
+'''
+
+#return statement
+'''
+import random
+def getAns(ansno):
+    if ansno == 1:
+        return "its certain1"
+    elif ansno == 2:
+        return "its certain2"
+
+    return "test"
+r = random.randint(1, 4)
+teat = getAns(r)
+print(teat)
+
+'''

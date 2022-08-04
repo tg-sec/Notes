@@ -1,0 +1,467 @@
+Terraform
+
+Terraform tools - Terragrunt,Terratest
+
+Terraform use dependency graph to execute the TF script
+--------------------------------------------------------------------------------------------
+Public clouds - AWS, Azure, GCP, DigitalOcean
+Private Clouds = Openstack, VMware
+
+IaaC -  managing and provisioning of infrastructure through code instead of through manual processes.
+
+    manage your infrastructure not by clicking around a web page or manually executing shell commands, but through code. This is a concept that is typically called infrastructure as code.
+
+categories of IAC tools -
+    Ad hoc scripts - shell scripts are ad-hoc scripts
+    Configuration management tools - ansible,chef
+    Server templating tools - Docker,vagrant,packer
+    Orchestration tools - Kubernetes,Openshift, EKS, AKS, GKE
+    Provisioning tools - Terraform, CloudFormation
+
+Benefits of IaaC:
+    self-service - developer can start infrastructure with automated process
+    speed and safety
+    version control
+    validation
+    reuse
+
+how it works -
+    a terraform library make API call to providers such as AWS,Azure,GCP.
+
+    what API call to make by terraform a terraform Configuration file will be mention of that.
+
+-----------------------------------------------------------------------------------------------------------
+AWS + Terraform combination
+
+    @export ACCESS_ID=<aws_Access_id>
+    #export ACCESS_KEY=<aws_access_key>
+
+HCL - HashiCorp Configuration Language
+.tf - this extension used by all terraform files
+providers - Terraform can create infrastructure across a wide variety of platforms. (AWS,Azure,GCP)
+
+---------------------------------------------------------------------------------------------------------
+Terraform commands -
+
+    Terraform init  -   Prepare your working directory for other commands
+    Terraform validate  -   Check whether the configuration is valid
+    Terraform plan  -   Show changes required by the current configuration
+    Terraform apply -   Create or update infrastructure
+    Terraform destroy   -   Destroy previously-created infrastructure
+	Terraform workspace - to create and manage different workspace (for state files section)
+	Terraform output - show the output of tf modules which uses output resource
+	Terraform Show - show the current tf module status
+	terraform state mv <ORIGINAL_REFERENCE> <NEW_REFERENCE> - rename reference in state file
+
+---------------------------------------------------------------------------------------------------------
+Simple Terraform file -
+
+provider "aws" {
+  region     = "ap-south-1"
+  access_key = "KEY"
+  secret_key = "KEY"
+}
+
+resource "aws_instance" "test_vm" {
+  ami           = "ami-079b5e5b3971bd10d"
+  instance_type = "t2.micro"
+  subnet_id     = "subnet-0bdf4ea35ac598155"
+  tags = {
+    "Name" = "TEST_TERRAFORM"
+  }
+}
+-----------------------------------------------------------------------------------------------
+user_data = <<-EOF ... EOF - Terraform’s heredoc syntax, which allows you to create multiline strings without having to insert newline characters all over the place.
+
+Template_file data source - for EC2 user_data to parse the scripts
+
+Provisioners - Provisioners are used to executing script on local or remote machine when you run Terraform.
+
+			local-exec - on local machine
+			remote-exec - remote machine
+
+-------------------------------------------------------------------------------------------------
+Reference - allows you to access values from other parts of your code.
+
+	resource attribute reference - To access the ID of the security group resource, you are going to need to
+	use a resource attribute reference. (aws_security_group.instance.id)
+#Pending
+	Local Reference -
+	output Reference -
+
+-------------------------------------------------------------------------------------------------
+Variables - to Apply DRY Principle to configuration use Variables.
+
+Syntax -
+
+    variable "NAME" {
+      [CONFIG ...]
+    }
+
+eg.
+    variable "list_numeric_example" {
+		description = "An example of a numeric list in Terraform"
+		type = list(number)
+		default = [1, 2, 3]
+    }
+
+description - show the description when we apply or plan the provisioning
+
+default - provide the variable values (-var for CLI and -var-file for variable file)
+
+type - allows you enforce type constraints on the variables a user passes in.support types by terraform string, number, bool,list, map, set, object, tuple, and any.
+
+	access variable -
+		var.var1 = var.<variable_block_name>
+		terraform plan -var="var1=false" - via CLI
+
+variable Interpolation -
+	user_data = <<-EOF
+		#!/bin/bash
+		echo "Hello, World" > index.html
+		nohup busybox httpd -f -p ${var.var1} &
+		EOF
+
+output variable - show the USER DATA on screen after terraform execution.
+
+		output "public_ip" {
+		value = aws_instance.example.public_ip
+		description = "The public IP address of the web server"
+		}
+
+-----------------------------------------------------------------------------
+Terraform Auto Scale Group
+
+1.	aws_launch_configuration
+		image_id
+		security_groups
+
+2.	aws_autoscaling_group
+		launch_configuration = <name_of launch _config>
+		max_size = 2
+		min_size = 5
+
+But if you change launch configuration terraform will face issues. so use lifecycle setting.
+
+3.	create_before_destroy - Terraform will invert the order in which it replaces resources, creating the replacement resource first and then deleting the old resource.
+
+		lifecycle {
+			create_before_destroy = true
+		}
+
+4. aws_autoscaling_schedule - Auto schedule the ASG as per traffic and time
+
+		resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {
+			scheduled_action_name = "scale-out-during-business-hours"
+			min_size = 2
+			max_size = 10
+			desired_capacity = 10
+			recurrence = "0 9 * * *"
+		}
+-------------------------------------------------------------------------------------
+Data Source -
+#Pending
+	represents a piece of read-only information that is fetched from the provider (in this case, AWS) every time you run Terraform. Adding a data source to your Terraform configurations does not create anything new; it’s just a way to query the provider’s APIs for data and to make that data available to the rest of your Terraform code.
+
+--------------------------------------------------------------------------------------
+Manage Terraform State (backends)
+
+State are store on JSON format in .tfstate files.it stored the what has been deployed in cloud state.
+
+Issues -
+1.	Shared storage for state files - team members needs access to the same Terraform state file
+
+	 Locking state files - Without locking, if two team members are running Terraform at the same time, you can run into race conditions.
+
+2.	Isolating state files - how can you isolate your changes if all of your infrastructure is defined in the same Terraform state file?
+
+Solutions -
+1.	Shared Storage for State Files -
+	- Remote backends allow you to store the state file in a remote, shared store.
+	- AWS S3 with dynomoDB primary key called LockID
+	- limitation is you cant use variables in backend configuration so you have to manually add this entry to every tf modules(collection small task tf)
+
+	- Sample Remote backends tf config
+
+		terraform {
+			backend "s3" {
+				bucket = "terraform-up-and-running-state"
+				key = "global/s3/terraform.tfstate"
+				region = "ap-south-1"
+				dynamodb_table = "terraform-up-and-running-locks"
+				encrypt = true
+			}
+		}
+
+2.	Isolating state files -
+	- if you are managing all the environments from a single set of Terraform configurations, you are breaking that isolation
+
+	type of Isolating -
+		Isolation via workspaces - use for Development
+			- default is terraform single workspace.
+			- can create different workspace for different usecases but with single tf module to switch between use terraform workspace commands
+			- too many workspace create confusion
+
+		Isolation via file layout - use for Production
+			- create separate folder for dev and prod environments so you will be configuring different backend with different workspace so all environments will be separate from each others state files.
+
+			eg.
+				Development
+					vpc
+					services
+						frontend-app
+							main.tf
+							variable.tf
+							output.tf
+						backend-app
+							.tf
+					data-storage
+						sql-db
+							.tf
+
+				Production
+					vpc
+					services
+						frontend-app
+							main.tf
+							variable.tf
+							output.tf
+						backend-app
+							.tf
+					data-storage
+						sql-db
+							.tf
+
+terraform_remote_state -  use in state to retrieve read-only data source of the different .tfstate files
+
+Terraform’s standard interpolation syntax - in bash we env similar in terraform use that functionality with reference.
+
+-------------------------------------------------------------------------------------------------------
+Create Reusable Infrastructure with Terraform Modules
+
+Modules - any set of Terraform configuration files in a folder is a module.key ingredient to writing reusable, maintainable,and testable Terraform code.
+
+Module Basics -
+	Syntax -
+				module "<NAME>" {
+					source = "<SOURCE>"
+					[CONFIG ...]
+				}
+		eg. 	module "webserver_cluster" {
+					source = "../../../modules/services/webserver-cluster"
+				}
+
+Module Input -
+	use variable.tf file which will be mention all variables.use variable instead of the name.
+
+Module Locals -
+	don't want expose and reuse same config in some file you can create local block to mention the config.
+		eg.
+			 locals {
+				http_port = 80
+				any_port = 0
+				any_protocol = "-1"
+				tcp_protocol = "tcp"
+				all_ips = ["0.0.0.0/0"]
+				}
+Module output -
+	similar to output reference but within module (not outside)
+
+Module Gotches -
+	file paths - use path.<> (eg. path.module) in module to provide reference to scrips files
+	inline blocks -
+
+Module Versioning -
+	if we made some changes in module it will affect on both environments (dev, stage, prod) so it will may break environment. so best option is use different version of module for the both environment.(eg. 1.0.2)
+
+------------------------------------------------------------------------------------------
+Terraform Tips and Tricks: Loops,If-Statements, Deployment, and Gotchas
+
+#Loops -
+	can be use array of index to provide inputs iteration
+	tag is inline block, resource is just a resource
+eg.
+		variable "user_names" {
+			description = "Create IAM users with these names"
+			type = list(string)
+			default = ["neo", "trinity", "morpheus"]
+		}
+
+Loop with count - to repeat the work
+		  count.index - iteration of work (for loop)
+eg.
+		resource "aws_iam_user" "example" {
+			count = length(var.user_names)
+			name = var.user_names[count.index]
+		}
+
+Loop with for_each expression - oop over lists, sets, and maps to create either (a) multiple copies of an entire resource, or (b) multiple copies of an inline block within a resource.
+
+eg.	for_each -
+		resource "aws_iam_user" "example" {
+			for_each = toset(var.user_names)
+			name = each.value
+		}
+
+Loop with for expression - where LIST is a list to loop over, ITEM is the local variable name to assign to each item in LIST, and OUTPUT is an expression that transforms ITEM in some way.
+
+	for expression - For loop for items in terraform
+eg.		output "upper_names" {
+			value = [for name in var.names : upper(name)]
+		}
+
+		output "bios" {
+			value = [for name, role in var.hero_thousand_faces : "${name} is the ${role}"]
+		}
+
+		output "upper_roles" {
+			value = {for name, role in var.hero_thousand_faces : upper(name) => upper(role)}
+		}
+
+Loop with String Directive - String directives allow you to use control statements (e.g., for-loops and if-statements) within strings using a syntax similar to string interpolations, but instead of a dollar sign and curly braces (${…}), you use a percent sign and curly braces (%{…}).
+
+eg.
+		output "for_directive" { value = <<EOF
+			%{ for name in var.names }
+			${name}
+			%{ endfor }
+			EOF
+		}
+
+-------------------------------------------------------------------------------------
+zero-downtime deployment
+
+create_before_destroy - Terraform will invert the order in which it replaces resources, creating the replacement resource first and then deleting the old resource.
+
+		lifecycle {
+			create_before_destroy = true
+		}
+
+aws_autoscaling_schedule - Auto schedule the ASG as per traffic and time
+
+		resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {
+			scheduled_action_name = "scale-out-during-business-hours"
+			min_size = 2
+			max_size = 10
+			desired_capacity = 10
+			recurrence = "0 9 * * *"
+		}
+
+-----------------------------------------------------------------------------------
+Valid Plans Can Fail
+
+After you start using Terraform, you should only use Terraform -
+	dont make any manual change in aws cloud or it will no detected by terraform because of state file
+	so After you start using Terraform, you should only use Terraform.
+
+If you have existing infrastructure, use the import command -
+	If you created infrastructure before you started using Terraform, you can use the terraform import command to add that infrastructure to Terraform’s state file, so that Terraform is aware of and can manage that infrastructure.
+
+		eg. terraform import aws_iam_user.existing_user yevgeniy.brikman
+
+--------------------------------------------------------------------------------
+Best Practice lessons
+
+	Always use the plan command
+	use Create_before_destroy strategy
+	changing identifiers requires changing state
+	Some parameters are immutable
+
+---------------------------------------------------------------------------------------------
+Production grade IaC
+
+Small Modules -
+	break the infrastructure into small modules task to execution. (Universal Modules)
+
+Composable modules -
+	integrate the small modules in services. (Services Modules with integration Universal Modules)
+
+Testable modules -
+	create example folder and create test tf with Provider,backend etc. (Testing Modules with service and Universal Modules)
+
+Releasable modules -
+	after tested the module publishing that on any version control systems like git,terraform registry
+		(Publishing Module with Testing,Service and Universal Modules)
+
+Beyond Terraform modules -
+	external tools to fill the gap which terraform created or cant do. (like Script )
+
+	Provisioners - Provisioners are used to executing script on local or remote machine when you run Terraform.
+
+			local-exec - on local machine
+			remote-exec - remote machine
+
+		eg. resource "aws_instance" "example" {
+				ami = "ami-0c55b159cbfafe1f0"
+				instance_type = "t2.micro"
+
+				provisioner "local-exec" {
+					command = "echo \"Hello, World from $(uname -smp)\""
+				}
+			}
+
+	Provisioners with null_resource - some time you have exec the Provisioners without specific resource.
+
+			triggers - which takes in a map of keys and values
+
+		eg. resource "null_resource" "example" {
+				# Use UUID to force this null_resource to be recreated on every
+				# call to 'terraform apply'
+				triggers = {
+					uuid = uuid()
+					}
+				provisioner "local-exec" {
+					command = "echo \"Hello, World from $(uname -smp)\""
+				}
+			}
+
+	External data source - external programs
+
+		eg. data "external" "echo" {
+				program = ["bash", "-c", "cat /dev/stdin"]
+
+				query = {
+					foo = "bar"
+				}
+			}
+
+			output "echo" {
+				value = data.external.echo.result
+			}
+			output "echo_foo" {
+				value = data.external.echo.result.foo
+			}
+
+Tree Structure of Sample Modules -
+
+	modules
+		└ examples (Testing module)
+			└ alb
+			└ asg-rolling-deploy
+				└ one-instance
+				└ auto-scaling
+				└ with-load-balancer
+				└ custom-tags
+			└ hello-world-app (service Modules)
+			└ mysql
+		└ modules (main Modules)
+			└ alb
+			└ asg-rolling-deploy
+			└ hello-world-app
+			└ mysql
+		└ test
+			└ alb
+			└ asg-rolling-deploy
+			└ hello-world-app
+			└ mysql
+
+----------------------------------------------------------------
+Sample AWS Provisioning -
+
+  1. Create VPC
+  2. Create Internet Gateway
+  3. Create Subnets (Private/Public)
+  4. Create Route Table with public subnet
+  5. Associate Route table to subnets with public
+  6. Create Security Group with 22,80 port
+  7. Create EC2 Instance with HTTPS server

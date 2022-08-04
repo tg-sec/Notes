@@ -1,0 +1,14 @@
+Python
+Bash
+Security as Code
+AWS - security
+Owasp Top 10
+Owasp API Security
+Container Security
+Terraform
+Ansible
+Jenkins
+Docker
+Kubernetes
+SAST
+DAST
